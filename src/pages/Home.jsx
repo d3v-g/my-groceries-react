@@ -3,12 +3,12 @@ import Modal from '../components/Modal'
 import Item from '../components/Item'
 import { useState, useEffect } from 'react'
 import { Navigate } from 'react-router-dom'
-import CategoryAddForm from '../components/CategoryAddForm'
+import CategoryForm from '../components/CategoryAddForm'
 import searchImg from '../assets/searchImg.png'
 import { supabase } from '../supabaseClient'
 
 export default function Home({ 
-    userLoggedIn
+    userLoggedIn, userId
 }) {
     const [categories, setCategories] = useState(null)
     const [selectedCategoryId, setSelectedCategoryId] = useState(null);
@@ -17,6 +17,7 @@ export default function Home({
     async function getCategories() {
         const {data} = await supabase.from('categories')
             .select('category_name, id')
+            .order('created_at')
         setCategories(data)
         setSelectedCategoryId(selectedCategoryId ?? data[0].id)
     }
@@ -46,7 +47,7 @@ export default function Home({
             id={data.id}
             currentCategoryId={selectedCategoryId}
             updateCurrentCategory={updateSelectedCategory}
-            handleClick={handleClick}
+            handleClick={handleUserEvent}
         />
     )
 
@@ -57,6 +58,7 @@ export default function Home({
             item_count={data.count}
             key={data.id}
             id={data.id}
+            handleClick={handleUserEvent}
         />
     )
     
@@ -65,25 +67,20 @@ export default function Home({
       }
     
     // use state to keep track of whether the user is adding or editing, item or category
-    const [mode, setMode] = useState('')
-    const [target, setTarget] = useState('');
-    const [showModal, setShowModal] = useState(false);
-    // keep track of the id of the category/item that is being edited/deleted
-    const [id, setId] = useState(null)
+    const [userEvent, setUserEvent] = useState({mode: '', target: '', id: ''})
+    const [showModal, setShowModal] = useState(false)
 
-    function handleClick(event) {
-        setMode(event.target.dataset.mode);
-        setTarget(event.target.dataset.target);
-        setShowModal(true);
-        setId(event.target.dataset.id);
+    function handleUserEvent(event, mode, target) {
+        setUserEvent({mode, target, id: event.currentTarget.id})
+        setShowModal(true)
     }
 
-    //Data returned from model, I think this should be leveraged higher up from App
     const [modalResponse, setModalResponse] = useState(null)
 
     const onModalClose = (response) => {
         setShowModal(false);
         setModalResponse(response); // We should "reduce" the data from app
+
     }
     
     // extract all the items out of the data prop
@@ -96,8 +93,20 @@ export default function Home({
         return (
             <div className="container">
                 {showModal && 
-                    <Modal onClose={onModalClose} initialData={null} title='Add a Category'>
-                        <CategoryAddForm />
+                    <Modal onClose={onModalClose} title={`${userEvent.mode} a${userEvent.target === 'item' ? 'n' : ''} ${userEvent.target}`}>
+                        {userEvent.target==='category' && 
+                            <CategoryForm initialData={categories.find(c => c.id === userEvent.id)} onClose={onModalClose} userId={userId} mode={userEvent.mode}/>}
+                        {/* 
+                        {userEvent.target === 'item' && 
+                            <ItemForm onClose={onModalClose} userId={userId} />}
+                        */}
+                        {/* 
+                            <CategoryEditForm />
+                            <CategoryDeleteForm />
+                            <ItemAddForm />
+                            <ItemEditForm />
+                            <ItemDeleteForm />
+                        */}
                     </Modal>
                 }
                 <div className='categories--container'>
@@ -105,9 +114,7 @@ export default function Home({
                     {categoryElements}
                     <button 
                         className='button--add'
-                        data-target='category'
-                        data-mode='add'
-                        onClick={event => handleClick(event)}
+                        onClick={event => handleUserEvent(event, 'add', 'category')}
                     >Add category</button>
                 </div>
                 <hr className="break"></hr>
@@ -131,9 +138,7 @@ export default function Home({
                         </div>
                         <button
                             className='button--add'
-                            data-target='items'
-                            data-mode='add'
-                            onClick={event => handleClick(event)}
+                            onClick={event => handleUserEvent(event, 'add', 'item')}
                         >Add item</button>
                     </div>
                 </div>

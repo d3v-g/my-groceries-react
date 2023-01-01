@@ -7,34 +7,18 @@ import { useEffect } from 'react'
 export default function Modal({
     initialData, onClose, title, children
 }) {
-    // listen to the 'enter' and 'escape' key
-    useEffect(() => {
-        function handleKeyDown(event) {
-            if (event.code === 'Enter' || event.code === 'NumpadEnter') {
-                handleSubmit(event);
-            }
-            else if (event.code === 'Escape') {
-                cancelChange(event);
-            }
-        };
-        document.addEventListener('keydown', handleKeyDown);
-        
-        return () => {
-            document.removeEventListener('keydown', handleKeyDown);
-        }
-    }, [])
 
     return (
-        <div 
+        <div
             className="modal"
-            onClick={(event) => cancelChange(event)}
+            onClick={() => onClose({canceled: true, data: null})}
         >
             <div className="modal--content" onClick={(event) => event.stopPropagation()}>
                 <div className="modal--header">
                     <h4 className="modal--title">{title}</h4>
                     <button 
                         className='modal--exit'
-                        onClick={(event) => cancelChange(event)}
+                        onClick={() => onClose({canceled: true, data: null})}
                     >
                         <img
                             src={exitImage}

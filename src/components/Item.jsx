@@ -5,7 +5,7 @@ import addItemImage from '../assets/add-item.png'
 
 
 export default function Item({
-    item_name, item_note, item_count, id
+    item_name, item_note, item_count, id, handleClick
 }) {
     return (
         <div className='item'>
@@ -13,18 +13,12 @@ export default function Item({
                 <p>{item_name}</p>
                 <button
                     className='edit--button'
-                    data-target='items'
-                    data-mode='edit'
-                    data-id={id}
-                    onClick={() => {}}>
+                    onClick={event => {handleClick(event, 'edit', 'item')}}>
                     <img src={editImage} />
                 </button >
                 <button
                     className='delete--button'
-                    data-target='items'
-                    data-mode='delete'
-                    data-id={id}
-                    onClick={() => {}} 
+                    onClick={event => handleClick(event, 'delete', 'item')} 
                 >
                     <img src={deleteImage} />
                 </button>

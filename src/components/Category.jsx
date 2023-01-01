@@ -13,21 +13,16 @@ export default function Category({
             onClick={(event) => updateCurrentCategory(event)}
         >
             {category_name}
-            <button className='edit--button' onClick={event => handleClick(event)}>
+            <button className='edit--button' id={id} onClick={event => handleClick(event, 'edit', 'category')}>
                 <img
                     src={editImage}
-                    data-target='category'
-                    data-mode='edit'
-                    data-id={id}
                 />
             </button>
             
-            <button className="delete--button" onClick={event => handleClick(event)}>
+            <button className="delete--button" id={id} onClick={event => handleClick(event, 'delete', 'category')}>
                 <img
                     src={deleteImage}
-                    data-target='category'
-                    data-mode='delete'
-                    data-id={id}
+                    id={id}
                 />
             </button>
 
