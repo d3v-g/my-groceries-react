@@ -9,7 +9,6 @@ import { supabase } from '../supabaseClient'
 //         cancelChange(event)
 //     }
 // };
-// id, mode, target, handleChange, handleSubmit, cancelChange
 export default function CategoryForm({ initialData, onClose, userId, mode }) { 
 
     const { register, handleSubmit, formState: { errors } } = useForm()
@@ -27,12 +26,12 @@ export default function CategoryForm({ initialData, onClose, userId, mode }) {
         if(mode === 'add') {
              ({ data, error } = await supabase
                .from('categories')
-               .insert({ category_name: formData.categoryName, user_id: userId })
+               .insert({ name: formData.name, user_id: userId })
                .select())
         } else {
              ({ data, error } = await supabase
                 .from('categories')
-                .update({ category_name: formData.categoryName })
+                .update({ name: formData.name })
                 .eq('id', initialData.id)
                 .select())
         }
@@ -40,26 +39,28 @@ export default function CategoryForm({ initialData, onClose, userId, mode }) {
         if (data) {
             onClose({canceled: false, data})
         } else console.error(error)
-    };
+    }
 
     return (
-        <div className='modal--form'>
-            <form onSubmit={handleSubmit(onSubmit)}>
+        <div>
+            <form className='modal--form' onSubmit={handleSubmit(onSubmit)}>
                 {/* register your input into the hook by invoking the "register" function */}
-                <label htmlFor='categoryName' className='form--question'>Enter a category:</label>
+                <label htmlFor='name' className='form--question'>
+                    {mode === 'add' ? 'Enter an category:' : 'Edit category'}
+                </label>
                 <input
                     className='form--input'
                     type='text'
                     placeholder='e.g. food'
-                    defaultValue={initialData?.category_name}
-                    {...register("categoryName", { required: true, maxLength: 20 })} 
+                    defaultValue={initialData?.name}
+                    {...register("name", { required: true, maxLength: 20 })} 
                 />
-                {errors.categoryName?.type === 'required' && <p role="alert">Category name is required</p>}
-                {errors.categoryName?.type === 'maxLength' && <p role="alert">Maximum category length is 20</p>}
+                {errors.name?.type === 'required' && <p role="alert">Category name is required</p>}
+                {errors.name?.type === 'maxLength' && <p role="alert">Maximum category length is 20</p>}
 
-                <div className='modal--buttons'>
-                    <button className='form--submit' type='submit'>Submit</button>
-                    <button className='form--cancel' onClick={() => onClose({canceled: true, data: null})}>Cancel</button>
+                <div className='form--buttons'>
+                    <button className='button--green' type='submit'>Submit</button>
+                    <button className='button--red' onClick={() => onClose({canceled: true, data: null})}>Cancel</button>
                 </div>
                 
 

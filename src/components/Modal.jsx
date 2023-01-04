@@ -1,5 +1,4 @@
 import exitImage from '../assets/exit.png'
-import { useEffect } from 'react'
 
 // initialData e.g. pre-populate form with data this could be useful in edit mode whereas creational will be empty 
 // onClose e.g. controlled by parent and has the state of information for user response data and if the form was cancelled or not
@@ -44,16 +43,6 @@ export default function Modal({
                         </label>
                     }
                     
-                    <div className='modal--buttons'>
-                        <button 
-                            className='modal--cancel'
-                            onClick={(event) => cancelChange(event)}
-                        >Cancel</button>
-                        <button 
-                            className='modal--save'
-                            type="submit"
-                        >Save</button>
-                    </div>
                 </form> */}
             </div>
         </div>
