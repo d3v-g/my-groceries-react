@@ -12,6 +12,24 @@ export default function DeleteForm({ initialData, onClose, target }) {
             onClose({canceled: false, data: initialData})
         }
     }    
+
+    function handleKeyDown(event) {
+        if (event.code === 'Enter' || event.code === 'NumpadEnter') {
+            handleDelete()
+        }
+        else if (event.code === 'Escape') {
+            onClose({canceled: true, data: null})
+        }
+    }
+
+    useEffect(() => {        
+        document.addEventListener('keydown', handleKeyDown)
+        
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown)
+        }
+    }, [])
+
     return (
         <div className='modal--form'>
             <p className='form--question'>{`Are you sure you want to delete this ${target}: ${initialData.name}?`}</p>

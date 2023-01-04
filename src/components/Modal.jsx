@@ -1,12 +1,8 @@
 import exitImage from '../assets/exit.png'
 
-// initialData e.g. pre-populate form with data this could be useful in edit mode whereas creational will be empty 
-// onClose e.g. controlled by parent and has the state of information for user response data and if the form was cancelled or not
-// id, mode, target, handleChange, handleSubmit, cancelChange 
 export default function Modal({
-    initialData, onClose, title, children
+    onClose, title, children
 }) {
-
     return (
         <div
             className="modal"
@@ -25,25 +21,6 @@ export default function Modal({
                     </button>
                 </div>
                 {children}
-
-                {/* <form className='modal--form' onSubmit={(event) => handleSubmit(event)}>
-                    {mode === 'delete' ?
-                        <p>Are you sure you want to delete this item: </p> :
-                        <label className='modal--question'>
-                            {`Enter a${target === 'items' ? 'n' : ''} `}{target}:
-                            <input
-                                type="text" 
-                                data-target={target}
-                                data-mode={mode}
-                                data-id={id}
-                                onChange={(event) => handleChange(event)}
-                                placeholder='max 20 characters'
-                                autoFocus='on'
-                            />
-                        </label>
-                    }
-                    
-                </form> */}
             </div>
         </div>
     )

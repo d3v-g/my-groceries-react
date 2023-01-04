@@ -9,7 +9,7 @@ export default function Category({
         <div
             className={`category ${currentCategoryId == id && 'category--current'}`}
             id={id}
-            onClick={(event) => updateCurrentCategory(event)}
+            onClick={() => updateCurrentCategory(id)}
         >
             {name}
             <button className='edit--button' id={id} onClick={event => handleClick(event, 'edit', 'category')}>

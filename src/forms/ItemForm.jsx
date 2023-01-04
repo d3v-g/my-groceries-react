@@ -1,4 +1,5 @@
 import { useForm } from 'react-hook-form'
+import { useEffect } from 'react'
 import { supabase } from '../supabaseClient'
 
 export default function ItemForm({initialData, onClose, userId, mode, parentCategoryId}) {
@@ -22,6 +23,23 @@ export default function ItemForm({initialData, onClose, userId, mode, parentCate
             onClose({canceled: false, data})
         } else console.error(error)
     }
+
+    function handleKeyDown(event) {
+        if (event.code === 'Enter' || event.code === 'NumpadEnter') {
+            handleSubmit(onSubmit)
+        }
+        else if (event.code === 'Escape') {
+            onClose({canceled: true, data: null})
+        }
+    }
+
+    useEffect(() => {        
+        document.addEventListener('keydown', handleKeyDown)
+        
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown)
+        }
+    }, [])
 
     return (
         <div>

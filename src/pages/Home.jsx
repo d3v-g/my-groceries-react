@@ -6,52 +6,22 @@ import ItemForm from '../forms/ItemForm'
 import DeleteForm from '../forms/DeleteForm'
 import { useState, useEffect } from 'react'
 import { Navigate } from 'react-router-dom'
-import { supabase } from '../supabaseClient'
+import { getCategories, getItems, addItemCount, subtractItemCount } from '../helpers.js'
 import searchImg from '../assets/searchImg.png'
-
-async function getCategories() {
-    const { data } = await supabase.from('categories')
-        .select('name, id')
-        .order('created_at')
-    return data
-}
-
-async function getItems(parentCategoryId) {
-    const { data } = await supabase.from('items')
-        .select('id, name, note, count')
-        .eq('parent_category_id', parentCategoryId)
-        .order('created_at')
-    return data
-}
-
-async function addItemCount(id, initialCount) {
-    const { data, error } = await supabase
-        .from('items')
-        .update({ count: initialCount + 1 })
-        .eq('id', id)
-        .select()
-    if (error) {
-        console.error(error)
-    } else return data.count
-}
-
-async function subtractItemCount(id, initialCount) {
-    const { data, error } = await supabase
-        .from('items')
-        .update({ count: initialCount - 1 })
-        .eq('id', id)
-        .select()
-    if (error) {
-        console.error(error)
-    } else return data.count
-}
-
 
 export default function Home({
     userLoggedIn, userId
 }) {
+    const [alertText, setAlertText] = useState(null)
+    function showAlert(text) {
+        setAlertText(text)
+        setTimeout(() => {
+            setAlertText('')
+        }, 5000)
+    }
+
     const [categories, setCategories] = useState(null)
-    const [selectedCategoryId, setSelectedCategoryId] = useState(null);
+    const [selectedCategoryId, setSelectedCategoryId] = useState(null)
     const [items, setItems] = useState(null)
 
     useEffect(() => {
@@ -76,7 +46,7 @@ export default function Home({
             key={data.id}
             id={data.id}
             currentCategoryId={selectedCategoryId}
-            updateCurrentCategory={updateSelectedCategory}
+            updateCurrentCategory={setSelectedCategoryId}
             handleClick={handleUserEvent}
         />
     )
@@ -94,33 +64,37 @@ export default function Home({
         />
     )
 
-    function updateSelectedCategory(event) {
-        setSelectedCategoryId(event.target.id);
-    }
-
     const [userEvent, setUserEvent] = useState({ mode: '', target: '', id: '' })
     const [showModal, setShowModal] = useState(false)
 
     function handleUserEvent(event, mode, target) {
+        if (mode != 'add') {
+            setSelectedCategoryId(target === 'category' ? event.currentTarget.id : selectedCategoryId)
+        }
         setUserEvent({ mode, target, id: event.currentTarget.id })
         setShowModal(true)
     }
 
-    const [modalResponse, setModalResponse] = useState(null)
-    // todo: make alert text to show up for 5 sec + after modal is closed
 
     const onModalClose = (response) => {
-        setShowModal(false);
-        setModalResponse(response); // We should "reduce" the data from app
-        getCategories()
-        getItems()
-    }
+        setShowModal(false)
+        if (response.canceled) {
+            showAlert('Change cancelled')
+        } else {
+            showAlert(`You have successfully ${userEvent.mode}${userEvent.mode != 'delete' ? 'ed' : 'd'}: ${response.data[0]?.name || response.data?.name}`)
+            getCategories()
+                .then(data => setCategories(data))
+            getItems(selectedCategoryId)
+                .then(data => setItems(data))
+        }
+        }
 
     if (!userLoggedIn) {
         return <Navigate replace to='/login' />
     } else {
         return (
             <div className="container">
+                <p>{alertText}</p>
                 {showModal &&
                     <Modal onClose={onModalClose} title={`${userEvent.mode} a${userEvent.target === 'item' ? 'n' : ''} ${userEvent.target}`}>
                         {userEvent.mode === 'delete'
@@ -186,6 +160,7 @@ export default function Home({
                             <p>Download as pdf</p>
                         </button>
                     </div>
+                    {/* <List /> */}
                 </div>
             </div>
         )
