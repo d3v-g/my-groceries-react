@@ -1,6 +1,7 @@
 import Category from '../components/Category'
 import Modal from '../components/Modal'
 import Item from '../components/Item'
+import List from '../components/List'
 import CategoryForm from '../forms/CategoryForm'
 import ItemForm from '../forms/ItemForm'
 import DeleteForm from '../forms/DeleteForm'
@@ -160,8 +161,8 @@ export default function Home({
                             <p>Download as pdf</p>
                         </button>
                     </div>
-                    {/* <List /> */}
                 </div>
+                <List />
             </div>
         )
     }

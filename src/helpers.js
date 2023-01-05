@@ -38,3 +38,23 @@ export async function subtractItemCount(id, initialCount) {
         } else return data[0].count
     } else return 0
 }
+
+export async function generateList() {
+    const { data, error } = await supabase
+        .from('categories')
+        .select(`
+            name,
+            id,
+            items (
+                id,
+                name,
+                note,
+                count
+            )
+        `)
+    if (error) {
+        console.error(error)
+    } else {
+        return data
+    }
+}
