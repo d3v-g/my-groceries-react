@@ -378,3 +378,26 @@
 .list--header--download::before {
     content: url(./assets/download.png);
 }
+
+.list {
+    font-family: 'Marck Script', cursive;
+    background-color: #fff7ee;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.list--category {
+    font-size:larger;
+    margin-bottom: 5px;
+    cursor: pointer;
+}
+
+.list--items {
+    color:#4a4a4a;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    cursor: pointer;
+}

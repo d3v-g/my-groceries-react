@@ -12,7 +12,7 @@ export default function List() {
             .then(data => setList(data))
     }, [])
 
-    // make list element
+    // todo: make function to update category/item to be crossed out if clicked
     const listElements = list?.map((data) => 
         <ListComponent 
             category={data.name}

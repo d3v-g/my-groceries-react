@@ -52,6 +52,7 @@ export async function generateList() {
                 count
             )
         `)
+        .order('created_at')
     if (error) {
         console.error(error)
     } else {
