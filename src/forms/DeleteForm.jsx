@@ -1,4 +1,5 @@
 import { supabase } from '../supabaseClient'
+import { useEffect } from 'react'
 
 export default function DeleteForm({ initialData, onClose, target }) {
     async function handleDelete() {

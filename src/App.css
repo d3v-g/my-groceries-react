@@ -367,6 +367,10 @@
     background-color: #ffffff;
 }
 
+.list--header--refresh::before {
+    content: url(./assets/refresh.png)
+}
+
 .list--header--copy::before {
     content: url(./assets/copy.png);
 }
@@ -379,7 +383,7 @@
     content: url(./assets/download.png);
 }
 
-.list {
+.list--content {
     font-family: 'Marck Script', cursive;
     background-color: #fff7ee;
     padding: 20px;
@@ -391,7 +395,6 @@
 .list--category {
     font-size:larger;
     margin-bottom: 5px;
-    cursor: pointer;
 }
 
 .list--items {
@@ -400,4 +403,8 @@
     flex-direction: row;
     justify-content: space-between;
     cursor: pointer;
+}
+
+.strikethrough {
+    text-decoration: line-through;
 }

@@ -5,12 +5,13 @@ import { supabase } from '../supabaseClient'
 export default function ItemForm({initialData, onClose, userId, mode, parentCategoryId}) {
 
     const { register, handleSubmit, formState: { errors } } = useForm()
+
     const onSubmit = async (formData) => {
         let data = null, error = null
         if(mode === 'add') {
              ({ data, error } = await supabase
                .from('items')
-               .insert({ name: formData.name,note: formData.itemNote, user_id: userId, parent_category_id: parentCategoryId })
+               .insert({ name: formData.name,note: formData.itemNote, count: 1, user_id: userId, parent_category_id: parentCategoryId })
                .select())
         } else {
              ({ data, error } = await supabase

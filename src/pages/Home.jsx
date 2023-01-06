@@ -7,7 +7,7 @@ import ItemForm from '../forms/ItemForm'
 import DeleteForm from '../forms/DeleteForm'
 import { useState, useEffect } from 'react'
 import { Navigate } from 'react-router-dom'
-import { getCategories, getItems, addItemCount, subtractItemCount } from '../helpers.js'
+import { getCategories, getItems, addItemCount, subtractItemCount, generateList } from '../helpers.js'
 import searchImg from '../assets/searchImg.png'
 
 export default function Home({
@@ -148,20 +148,6 @@ export default function Home({
                     </div>
                 </div>
                 <hr className="break"></hr>
-                <div className='list--header'>
-                    <h2 className='title'>Shopping List</h2>
-                    <div className='list--header--utils'>
-                        <button className='list--header--copy'>
-                            <p>Copy to Clipboard</p>
-                        </button>
-                        <button className='list--header--print'>
-                            <p>Print</p>
-                        </button>
-                        <button className='list--header--download'>
-                            <p>Download as pdf</p>
-                        </button>
-                    </div>
-                </div>
                 <List />
             </div>
         )
