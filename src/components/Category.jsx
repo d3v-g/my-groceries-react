@@ -2,14 +2,14 @@ import deleteImage from '../assets/delete.png'
 import editImage from '../assets/edit.png'
 
 export default function Category({ 
-    id, currentCategoryId, updateCurrentCategory, name, handleClick
+    id, selected, handleSelect, name, handleClick
 }) {
 
     return (
         <div
-            className={`category ${currentCategoryId == id && 'category--current'}`}
+            className={`category ${selected && 'category--current'}`}
             id={id}
-            onClick={() => updateCurrentCategory(id)}
+            onClick={(e) => handleSelect(e)}
         >
             {name}
             <button className='edit--button' id={id} onClick={event => handleClick(event, 'edit', 'category')}>

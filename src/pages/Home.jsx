@@ -7,12 +7,14 @@ import ItemForm from '../forms/ItemForm'
 import DeleteForm from '../forms/DeleteForm'
 import { useState, useEffect } from 'react'
 import { Navigate } from 'react-router-dom'
-import { getCategories, getItems, addItemCount, subtractItemCount, generateList } from '../helpers.js'
+import { addItemCount, subtractItemCount, generateList } from '../helpers.js'
 import searchImg from '../assets/searchImg.png'
 
 export default function Home({
     userLoggedIn, userId
 }) {
+    // next todo: optimise data fetching in Home component
+
     const [alertText, setAlertText] = useState(null)
     function showAlert(text) {
         setAlertText(text)
@@ -20,60 +22,72 @@ export default function Home({
             setAlertText('')
         }, 5000)
     }
-
-    const [categories, setCategories] = useState(null)
-    const [selectedCategoryId, setSelectedCategoryId] = useState(null)
-    const [items, setItems] = useState(null)
+    const [groceryData, setGroceryData] = useState(null)
+    const [changeDetected, setChangeDetected] = useState(false)
 
     useEffect(() => {
-        getCategories()
-            .then(
-                data => {
-                    setCategories(data);
-                    setSelectedCategoryId(selectedCategoryId ?? data[0]?.id)
-                })
-    }, [])
-
-    useEffect(() => {
-        if (selectedCategoryId) {
-            getItems(selectedCategoryId)
-                .then(data => setItems(data))
+        let currentCategoryId = null
+        if (groceryData?.find(data => data.selected)) {
+            currentCategoryId = groceryData.id
         }
-    }, [selectedCategoryId])
 
-    const categoryElements = categories?.map(data =>
+        generateList()
+            .then(data =>
+                currentCategoryId
+                    ?
+                    data.map(data => data.id === currentCategoryId ? { ...data, selected: true } : data)
+                    :
+                    data.map((data, index) => index === 0 ? { ...data, selected: true } : data))
+            .then(data => setGroceryData(data))
+    }, [changeDetected])
+
+    function handleSelect(event) {
+        const id = event.currentTarget.id
+        setGroceryData(prevData => prevData.map(data => {
+            if (data.id === id) {
+                return { ...data, selected: true }
+            } else {
+                if (data.selected != null) {
+                    return { ...data, selected: false }
+                } else return data
+            }
+        }))
+    }
+
+    const categoryElements = groceryData?.map(category =>
         <Category
-            name={data.name}
-            key={data.id}
-            id={data.id}
-            currentCategoryId={selectedCategoryId}
-            updateCurrentCategory={setSelectedCategoryId}
+            name={category.name}
+            key={category.id}
+            id={category.id}
+            selected={category.selected}
+            handleSelect={handleSelect}
             handleClick={handleUserEvent}
         />
     )
 
-    const itemElements = items?.map(data =>
-        <Item
-            name={data.name}
-            note={data.note}
-            count={data.count}
-            key={data.id}
-            id={data.id}
-            handleClick={handleUserEvent}
-            addItemCount={addItemCount}
-            subtractItemCount={subtractItemCount}
-        />
-    )
+    const itemElements = groceryData
+        ?.filter(element => element.selected)[0]
+        ?.items
+        ?.map(item =>
+            <Item
+                name={item.name}
+                note={item.note}
+                count={item.count}
+                key={item.id}
+                id={item.id}
+                handleClick={handleUserEvent}
+                addItemCount={addItemCount}
+                subtractItemCount={subtractItemCount}
+            />
+        )
 
     const [userEvent, setUserEvent] = useState({ mode: '', target: '', id: '' })
     const [showModal, setShowModal] = useState(false)
 
     function handleUserEvent(event, mode, target) {
-        if (mode != 'add') {
-            setSelectedCategoryId(target === 'category' ? event.currentTarget.id : selectedCategoryId)
-        }
-        setUserEvent({ mode, target, id: event.currentTarget.id })
         setShowModal(true)
+        const id = event.currentTarget.id
+        setUserEvent({ mode, target, id })
     }
 
 
@@ -83,12 +97,9 @@ export default function Home({
             showAlert('Change cancelled')
         } else {
             showAlert(`You have successfully ${userEvent.mode}${userEvent.mode != 'delete' ? 'ed' : 'd'}: ${response.data[0]?.name || response.data?.name}`)
-            getCategories()
-                .then(data => setCategories(data))
-            getItems(selectedCategoryId)
-                .then(data => setItems(data))
+            setChangeDetected(prevState => !prevState)
         }
-        }
+    }
 
     if (!userLoggedIn) {
         return <Navigate replace to='/login' />
@@ -101,15 +112,26 @@ export default function Home({
                         {userEvent.mode === 'delete'
                             ?
                             <DeleteForm
-                                initialData={userEvent.target === 'category' ? categories.find(c => c.id === userEvent.id) : items.find(i => i.id === userEvent.id)}
+                                initialData={userEvent.target === 'category' ? groceryData.find(c => c.id === userEvent.id) : groceryData.filter(c => c.selected)[0].items.find(i => i.id === userEvent.id)}
                                 onClose={onModalClose} userId={userId} target={userEvent.target}
                             />
                             :
                             (userEvent.target === 'category'
                                 ?
-                                <CategoryForm initialData={categories.find(c => c.id === userEvent.id)} onClose={onModalClose} userId={userId} mode={userEvent.mode} />
+                                <CategoryForm
+                                    initialData={groceryData.find(c => c.id === userEvent.id)}
+                                    onClose={onModalClose}
+                                    userId={userId}
+                                    mode={userEvent.mode}
+                                />
                                 :
-                                <ItemForm initialData={items.find(i => i.id === userEvent.id)} onClose={onModalClose} userId={userId} mode={userEvent.mode} parentCategoryId={selectedCategoryId} />
+                                <ItemForm
+                                    initialData={groceryData.filter(c => c.selected)[0].items.find(i => i.id === userEvent.id)}
+                                    onClose={onModalClose}
+                                    userId={userId}
+                                    mode={userEvent.mode}
+                                    parentCategoryId={groceryData.find(data => data.selected).id}
+                                />
                             )
                         }
                     </Modal>
