@@ -17,7 +17,7 @@ export default function ListComponent({ category, items, controlStrikeThrough })
     return (
         <div className='list--component'>
             <p
-                className={`list--category ${category?.selected ? 'strikethrough' : ''}`}
+                className={`list--category`}
                 id={category.id}
                 name={category.name}
             >{category.name}</p>

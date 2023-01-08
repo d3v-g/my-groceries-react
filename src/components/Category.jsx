@@ -13,18 +13,12 @@ export default function Category({
         >
             {name}
             <button className='edit--button' id={id} onClick={event => handleClick(event, 'edit', 'category')}>
-                <img
-                    src={editImage}
-                />
+                <img src={editImage} />
             </button>
             
             <button className="delete--button" id={id} onClick={event => handleClick(event, 'delete', 'category')}>
-                <img
-                    src={deleteImage}
-                />
+                <img src={deleteImage} />
             </button>
-
-            
         </div>
     )
 };

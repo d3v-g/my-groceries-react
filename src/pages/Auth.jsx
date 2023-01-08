@@ -1,5 +1,5 @@
-import { supabase } from '../supabaseClient'
 import { useRef, useState } from 'react'
+import { supabase } from '../supabaseClient'
 import { Navigate } from 'react-router-dom'
 
 export default function Auth({userLoggedIn}) {
@@ -29,8 +29,11 @@ export default function Auth({userLoggedIn}) {
     async function handleLogIn(email, username, password) {
         let usernameIsValid = false
         // check if username is in profile database
-        const { data } = await supabase.from('profiles').select().eq('username', username)
-        if (data[0] != null) {
+        const { data } = await supabase.from('profiles')
+            .select()
+            .eq('username', username)
+        
+            if (data[0] != null) {
             usernameIsValid = true
         }
 
@@ -58,20 +61,21 @@ export default function Auth({userLoggedIn}) {
     async function handleRegister(email, username, password, passwordConf) {
         if (password === passwordConf) {
             try {
-                const { user, error } = await supabase.auth.signUp({ email, password, 
-                    options: 
-                        {data: 
-                            { 'username': username, 'email': email} }})
+                const { user, error } = await supabase.auth.signUp({ 
+                    email, 
+                    password, 
+                    options: {data: { 'username': username, 'email': email} }})
+                
                 if (!user || error) {
                     throw error
-                } else setAlertText('please check your email for a verification link')
+                } else 
+                    setAlertText('please check your email for a verification link')
             } catch {
                 setAlertText(error?.error_description || error?.message)
             }
         }
-
         else if (passwordConf && password)
-        setAlertText('passwords do not match')
+            setAlertText('passwords do not match')
     }
     
     if (userLoggedIn) {

@@ -367,10 +367,6 @@
     background-color: #ffffff;
 }
 
-.list--header--refresh::before {
-    content: url(./assets/refresh.png)
-}
-
 .list--header--copy::before {
     content: url(./assets/copy.png);
 }

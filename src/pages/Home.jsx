@@ -1,19 +1,18 @@
 import Category from '../components/Category'
 import Modal from '../components/Modal'
 import Item from '../components/Item'
-import List from '../components/List'
+import ShoppingListContainer from '../components/ShoppingListContainer'
 import CategoryForm from '../forms/CategoryForm'
 import ItemForm from '../forms/ItemForm'
 import DeleteForm from '../forms/DeleteForm'
 import { useState, useEffect } from 'react'
 import { Navigate } from 'react-router-dom'
-import { addItemCount, subtractItemCount, generateList } from '../helpers.js'
+import { addItemCount, subtractItemCount, generateList } from '../api.js'
 import searchImg from '../assets/searchImg.png'
 
 export default function Home({
     userLoggedIn, userId
 }) {
-    // next todo: optimise data fetching in Home component
 
     const [alertText, setAlertText] = useState(null)
     function showAlert(text) {
@@ -23,7 +22,9 @@ export default function Home({
         }, 5000)
     }
     const [groceryData, setGroceryData] = useState(null)
-    const [changeDetected, setChangeDetected] = useState(false)
+    const [changeDetected, setChangeDetected] = useState(null)
+
+    console.log('grocery data', groceryData)
 
     useEffect(() => {
         let currentCategoryId = null
@@ -38,10 +39,12 @@ export default function Home({
                     data.map(data => data.id === currentCategoryId ? { ...data, selected: true } : data)
                     :
                     data.map((data, index) => index === 0 ? { ...data, selected: true } : data))
+
             .then(data => setGroceryData(data))
+
     }, [changeDetected])
 
-    function handleSelect(event) {
+    function handleSelectedCategory(event) {
         const id = event.currentTarget.id
         setGroceryData(prevData => prevData.map(data => {
             if (data.id === id) {
@@ -54,13 +57,28 @@ export default function Home({
         }))
     }
 
+    function handleSelectedItem(event) {
+        const id = event.target.id
+        setGroceryData(prevList => prevList.map((data) => {
+            return {...data, items: data.items.map((item) => {
+                if (item.id === id) {
+                    if (item.selected != null) {
+                        return {...item, selected: !item.selected}
+                    } else {
+                        return {...item, selected: true}
+                    }
+                } else return item
+            })}
+        }))
+    }
+
     const categoryElements = groceryData?.map(category =>
         <Category
             name={category.name}
             key={category.id}
             id={category.id}
             selected={category.selected}
-            handleSelect={handleSelect}
+            handleSelect={handleSelectedCategory}
             handleClick={handleUserEvent}
         />
     )
@@ -97,7 +115,7 @@ export default function Home({
             showAlert('Change cancelled')
         } else {
             showAlert(`You have successfully ${userEvent.mode}${userEvent.mode != 'delete' ? 'ed' : 'd'}: ${response.data[0]?.name || response.data?.name}`)
-            setChangeDetected(prevState => !prevState)
+            setChangeDetected('User modified grocery data')
         }
     }
 
@@ -170,7 +188,7 @@ export default function Home({
                     </div>
                 </div>
                 <hr className="break"></hr>
-                <List />
+                <ShoppingListContainer groceryData={groceryData} controlStrikeThrough={handleSelectedItem} />
             </div>
         )
     }
