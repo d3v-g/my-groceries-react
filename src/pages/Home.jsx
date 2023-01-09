@@ -13,6 +13,7 @@ import searchImg from '../assets/searchImg.png'
 export default function Home({
     userLoggedIn, userId
 }) {
+    // next todo: enable print pop up functionality
     const [alertText, setAlertText] = useState(null)
     function showAlert(text) {
         setAlertText(text)

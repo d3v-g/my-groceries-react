@@ -1,8 +1,10 @@
 import ShoppingListSection from './ShoppingListSection'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
+import ReactToPrint from 'react-to-print'
 
 export default function ShoppingListContainer({ groceryData, controlStrikeThrough }) {
     const [isCopied, setIsCopied] = useState(false)
+    let componentRef = useRef()
 
     const listElements = groceryData
         ?.map(data => 
@@ -25,6 +27,10 @@ export default function ShoppingListContainer({ groceryData, controlStrikeThroug
             setIsCopied(false)
         }, 5000)
     }
+    
+    function handleDownload() {
+        console.log('download')
+    }
 
     return (
         <div>
@@ -35,15 +41,21 @@ export default function ShoppingListContainer({ groceryData, controlStrikeThroug
                         <button className='list--header--copy' onClick={() => handleCopy()}>
                             <p>Copy to Clipboard</p>
                         </button>
-                        <button className='list--header--print'>
-                            <p>Print</p>
-                        </button>
-                        <button className='list--header--download'>
+                        <ReactToPrint 
+                            trigger={() => 
+                                <button className='list--header--print'>
+                                    <p>Print</p>
+                                </button>
+                            }
+                            content={() => componentRef}
+                         />
+                        
+                        <button className='list--header--download' onClick={() => handleDownload()}>
                             <p>Download as pdf</p>
                         </button>
                     </div>
                 </div>
-                <div className='list--content'>
+                <div className='list--content' ref={(el) => (componentRef = el)}>
                     {listElements}
                 </div>
         </div>
