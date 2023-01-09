@@ -45,13 +45,8 @@ export default function Home({
     // ]
 
     useEffect(() => {
-        let currentCategoryId = null
-        if (groceryData?.find(data => data.selected)) {
-            currentCategoryId = groceryData.id
-        }
-
+        const currentCategoryId = groceryData?.find(data => data.selected).id
         generateList()
-
             // .then(data => data.reduce((a, x) => {
             //         a[x.id] = {...x, items: x.items.reduce((b, y) => {
             //             b[y.id] = y

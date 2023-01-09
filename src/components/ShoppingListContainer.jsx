@@ -20,8 +20,14 @@ export default function ShoppingListContainer({ groceryData, controlStrikeThroug
 
     function handleCopy() {
         const text = groceryData.reduce((a, x) => {
-            const items = x.items.reduce((b, y) => `${b}-${y.name}\n`, '')
-            return `${a}${x.name.toUpperCase()}\n${items}`
+            const items = x.items.reduce((b, y) => {
+                if (y.count != 0) 
+                    {return `${b}-${y.name}${y.note && `(${y.note})`} x${y.count}\n`}
+                else return b
+            }
+            , '')
+            if (items) {return `${a}${x.name.toUpperCase()}\n${items}`}
+            else return a            
         }, 'My shopping list: \n')
         navigator.clipboard.writeText(text)
         setIsCopied(true)

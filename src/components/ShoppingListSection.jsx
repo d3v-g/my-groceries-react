@@ -1,7 +1,7 @@
 export default function ListComponent({ category, items, controlStrikeThrough }) {
-    
-    const itemElements = items.
-        filter(item => item.count > 0)
+
+    const itemElements = items
+        .filter(item => item.count > 0)
         .map(item => {
         return (
             <div className={`list--items ${item?.selected ? 'strikethrough' : ''}`} key={item.id}>
@@ -15,11 +15,13 @@ export default function ListComponent({ category, items, controlStrikeThrough })
     
     return (
         <div className='list--component'>
-            <p
-                className={`list--category`}
-                id={category.id}
-                name={category.name}
-            >{category.name}</p>
+            {items.length > 0 && 
+                <p
+                    className={`list--category`}
+                    id={category.id}
+                    name={category.name}
+                >{category.name}</p>
+            }
             {itemElements}
         </div>
     )
