@@ -12,10 +12,10 @@ export default function ListComponent({ category, items, controlStrikeThrough })
             </div>
         )
     })
-    
+
     return (
         <div className='list--component'>
-            {items.length > 0 && 
+            {itemElements.length > 0 && 
                 <p
                     className={`list--category`}
                     id={category.id}
