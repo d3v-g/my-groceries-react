@@ -2,6 +2,7 @@ import ShoppingListSection from './ShoppingListSection'
 import { useState, useRef } from 'react'
 import ReactToPrint from 'react-to-print'
 import JsPDF from 'jspdf'
+import { DateTime } from 'luxon'
 
 export default function ShoppingListContainer({ groceryData, controlStrikeThrough }) {
     const [isCopied, setIsCopied] = useState(false)
@@ -30,9 +31,8 @@ export default function ShoppingListContainer({ groceryData, controlStrikeThroug
     }
     
     function handleDownload() {
-        console.log('download')
         const pdf = new JsPDF
-        pdf.html(componentRef).then(() => pdf.save('shopping_list.pdf'))
+        pdf.html(componentRef).then(() => pdf.save(`shopping_list_${DateTime.now().toFormat('MM_dd_yyyy')}.pdf`))
     }
 
     return (
@@ -51,6 +51,7 @@ export default function ShoppingListContainer({ groceryData, controlStrikeThroug
                                 </button>
                             }
                             content={() => componentRef}
+                            documentTitle={`shopping_list_${DateTime.now().toFormat('MM_dd_yyyy')}`}
                          />
                         
                         <button className='list--header--download' onClick={() => handleDownload()}>

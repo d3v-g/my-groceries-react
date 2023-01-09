@@ -13,7 +13,7 @@ import searchImg from '../assets/searchImg.png'
 export default function Home({
     userLoggedIn, userId
 }) {
-    // next todo: enable download as pdf functionality
+    // next todo: debug print pdf and download pdf difference
     const [alertText, setAlertText] = useState(null)
     function showAlert(text) {
         setAlertText(text)
