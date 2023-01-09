@@ -13,7 +13,7 @@ import searchImg from '../assets/searchImg.png'
 export default function Home({
     userLoggedIn, userId
 }) {
-    // next todo: enable print pop up functionality
+    // next todo: enable download as pdf functionality
     const [alertText, setAlertText] = useState(null)
     function showAlert(text) {
         setAlertText(text)
@@ -26,7 +26,7 @@ export default function Home({
 
     const [changeDetected, setChangeDetected] = useState(null)
 
-    console.log('grocery data', groceryData)
+    // console.log('grocery data', groceryData)
 
     // It would be more ideal to change the data structure so that each entry as key is the id of the thing
     // Either do this in the db or at the data retrieval point from supabase
