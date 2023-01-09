@@ -13,7 +13,6 @@ import searchImg from '../assets/searchImg.png'
 export default function Home({
     userLoggedIn, userId
 }) {
-
     const [alertText, setAlertText] = useState(null)
     function showAlert(text) {
         setAlertText(text)
@@ -21,7 +20,9 @@ export default function Home({
             setAlertText('')
         }, 5000)
     }
+
     const [groceryData, setGroceryData] = useState(null)
+    
     const [changeDetected, setChangeDetected] = useState(null)
 
     // console.log('grocery data', groceryData)
