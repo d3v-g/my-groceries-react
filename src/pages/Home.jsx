@@ -26,6 +26,21 @@ export default function Home({
 
     // console.log('grocery data', groceryData)
 
+    // It would be more ideal to change the data structure so that each entry as key is the id of the thing
+    // Either do this in the db or at the data retrieval point from supabase
+    // e.g. you have: 
+    // [
+    //     0: {id: 123, items:[]},  
+    //     1: {id: 124, items: [0:{id:8, name:"a"}, 1:{id:9, name:"b"}, 2:{id:10, name:"c"}]}
+    //     1: {id: 125, category: "pills", items: [0:{id:11, name:"d"}]}
+    // ]
+    // we want instead IDs more accessible, don't worry about the slight duplication of having id as key and also inside the value object e.g.:
+    // NOTE YOU MOST LIKELY WILL BE ABLE TO DO SOMETHING NICE AND CLEVER WITH DE-STRUCTURING SYNTAX
+    // [
+    //     123: {id: 123, items:[]},  
+    //     124: {id: 124, items: [8:{id:8, name:"a"}, 9:{id:9, name:"b"}, 10:{id:10, name:"c"}]}
+    //     125: {id: 125, category: "pills", items: [11:{id:11, name:"d"}]}
+    // ]
     useEffect(() => {
         let currentCategoryId = null
         if (groceryData?.find(data => data.selected)) {
@@ -72,6 +87,10 @@ export default function Home({
         }))
     }
 
+    function updateItemCount(id) {
+
+    }
+
     const categoryElements = groceryData?.map(category =>
         <Category
             name={category.name}
@@ -114,8 +133,9 @@ export default function Home({
         if (response.canceled) {
             showAlert('Change cancelled')
         } else {
-            showAlert(`You have successfully ${userEvent.mode}${userEvent.mode != 'delete' ? 'ed' : 'd'}: ${response.data[0]?.name || response.data?.name}`)
-            setChangeDetected(`User modified grocery data: ${response.data[0].id}`)
+            const action = `${userEvent.mode}${userEvent.mode != 'delete' ? 'ed' : 'd'}`
+            showAlert(`You have successfully ${action}: ${response.data[0]?.name}`)
+            setChangeDetected(`User ${action} grocery data: ${response.data[0].id}`)
         }
     }
 

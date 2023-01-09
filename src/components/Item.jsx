@@ -8,6 +8,7 @@ import { useState } from 'react'
 export default function Item({
     name, note, count, id, handleClick, addItemCount, subtractItemCount
 }) {
+    // todo: use the change detection mechanism in home component
     const [updatedCount, setUpdatedCount] = useState(count)
 
     return (

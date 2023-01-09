@@ -10,7 +10,7 @@ export default function DeleteForm({ initialData, onClose, target }) {
         if (error) {
             console.error(error)
         } else {
-            onClose({canceled: false, data: initialData})
+            onClose({canceled: false, data: [initialData]})
         }
     }    
 
