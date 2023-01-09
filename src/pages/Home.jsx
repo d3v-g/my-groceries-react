@@ -87,8 +87,11 @@ export default function Home({
         }))
     }
 
-    function updateItemCount(id) {
-
+    async function updateItemCount(id, count, addOrSubtract) {
+        const newCount = (addOrSubtract === 'add') ? await addItemCount(id, count) : await subtractItemCount(id, count)
+        if (newCount != null) {
+            setChangeDetected(`user updated count of ${id} to ${newCount}`)
+        }
     }
 
     const categoryElements = groceryData?.map(category =>
@@ -113,8 +116,7 @@ export default function Home({
                 key={item.id}
                 id={item.id}
                 handleClick={handleUserEvent}
-                addItemCount={addItemCount}
-                subtractItemCount={subtractItemCount}
+                updateItemCount={updateItemCount}
             />
         )
 
@@ -126,7 +128,6 @@ export default function Home({
         const id = event.currentTarget.id
         setUserEvent({ mode, target, id })
     }
-
 
     const onModalClose = (response) => {
         setShowModal(false)

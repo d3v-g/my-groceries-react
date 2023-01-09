@@ -3,13 +3,10 @@ import editImage from '../assets/edit.png'
 import subtractImage from '../assets/subtract.png'
 import addItemImage from '../assets/add-item.png'
 
-import { useState } from 'react'
-
 export default function Item({
-    name, note, count, id, handleClick, addItemCount, subtractItemCount
+    name, note, count, id, handleClick, updateItemCount
 }) {
     // todo: use the change detection mechanism in home component
-    const [updatedCount, setUpdatedCount] = useState(count)
 
     return (
         <div className='item'>
@@ -32,18 +29,11 @@ export default function Item({
             </div>
             <p className='item--note'>note: {note ?? ''}</p>
             <div className='item--count'>
-                <button onClick={() => {
-                    subtractItemCount(id, updatedCount)
-                        .then(data => setUpdatedCount(data))
-                }}>
+                <button onClick={() => {updateItemCount(id, count, 'subtract')}}>
                     <img src={subtractImage} />
                 </button>
-                <p className='item--count'>{updatedCount}</p>
-                <button onClick={() => {
-                    addItemCount(id, updatedCount)
-                        .then(data => setUpdatedCount(data))
-                }
-                }>
+                <p className='item--count'>{count}</p>
+                <button onClick={() => {updateItemCount(id, count, 'add')}}>
                     <img src={addItemImage} />
                 </button>
             </div>
