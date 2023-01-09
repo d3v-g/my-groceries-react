@@ -24,7 +24,7 @@ export default function Home({
     const [groceryData, setGroceryData] = useState(null)
     const [changeDetected, setChangeDetected] = useState(null)
 
-    console.log('grocery data', groceryData)
+    // console.log('grocery data', groceryData)
 
     useEffect(() => {
         let currentCategoryId = null
@@ -115,7 +115,7 @@ export default function Home({
             showAlert('Change cancelled')
         } else {
             showAlert(`You have successfully ${userEvent.mode}${userEvent.mode != 'delete' ? 'ed' : 'd'}: ${response.data[0]?.name || response.data?.name}`)
-            setChangeDetected('User modified grocery data')
+            setChangeDetected(`User modified grocery data: ${response.data[0].id}`)
         }
     }
 
