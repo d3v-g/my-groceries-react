@@ -22,10 +22,10 @@ export default function Home({
     }
 
     const [groceryData, setGroceryData] = useState(null)
-    
+
     const [changeDetected, setChangeDetected] = useState(null)
 
-    // console.log('grocery data', groceryData)
+    console.log('grocery data', groceryData)
 
     // It would be more ideal to change the data structure so that each entry as key is the id of the thing
     // Either do this in the db or at the data retrieval point from supabase
@@ -42,6 +42,7 @@ export default function Home({
     //     124: {id: 124, items: [8:{id:8, name:"a"}, 9:{id:9, name:"b"}, 10:{id:10, name:"c"}]}
     //     125: {id: 125, category: "pills", items: [11:{id:11, name:"d"}]}
     // ]
+
     useEffect(() => {
         let currentCategoryId = null
         if (groceryData?.find(data => data.selected)) {
@@ -49,13 +50,28 @@ export default function Home({
         }
 
         generateList()
+
+            // .then(data => data.reduce((a, x) => {
+            //         a[x.id] = {...x, items: x.items.reduce((b, y) => {
+            //             b[y.id] = y
+            //             return b
+            //         }, {})
+            // }
+            //     return a
+            //     }, {})
+            // )
+            // .then(data => {
+            //     const property = 'd0bab6df-dbb5-46c3-9ec4-9d0c2e4877af'
+            //     const { [property]: object} = data
+            //     console.log(object)
+            // })
+
             .then(data =>
                 currentCategoryId
                     ?
                     data.map(data => data.id === currentCategoryId ? { ...data, selected: true } : data)
                     :
                     data.map((data, index) => index === 0 ? { ...data, selected: true } : data))
-
             .then(data => setGroceryData(data))
 
     }, [changeDetected])
