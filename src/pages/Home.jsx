@@ -9,6 +9,7 @@ import DeleteForm from '../forms/DeleteForm'
 import { useState, useEffect } from 'react'
 import { Navigate } from 'react-router-dom'
 import { addItemCount, subtractItemCount, generateList } from '../api.js'
+import { selectCategory, selectItem, searchItem, cancelItemHighlight } from '../helpers.js'
 
 export default function Home({
     userLoggedIn
@@ -16,7 +17,6 @@ export default function Home({
     // next todo: debug print pdf and download pdf difference
     // next todo: enable scroll to searched item
     // nest todo: add price to items
-    // next todo: make width of category and item components adapt to length of its name
     
     const [groceryData, setGroceryData] = useState(null)
     
@@ -83,71 +83,12 @@ export default function Home({
     // }
     // , [groceryData?.find(category => category.selected)?.items])
 
-    function handleSelectedCategory(event) {
-        const id = event.currentTarget.id
-        setGroceryData(prevData => prevData.map(data => {
-            if (data.id === id) {
-                return { ...data, selected: true }
-            } else {
-                if (data.selected != null) {
-                    return { ...data, selected: false }
-                } else return data
-            }
-        }))
-    }
-
-    function handleSelectedItem(event) {
-        const id = event.target.id
-        setGroceryData(prevList => prevList.map((data) => {
-            return {...data, items: data.items.map((item) => {
-                if (item.id === id) {
-                    if (item.selected != null) {
-                        return {...item, selected: !item.selected}
-                    } else {
-                        return {...item, selected: true}
-                    }
-                } else return item
-            })}
-        }))
-    }
-
     async function updateItemCount(id, count, addOrSubtract) {
         const newCount = (addOrSubtract === 'add') ? await addItemCount(id, count) : await subtractItemCount(id, count)
         if (newCount != null) {
-            setChangeDetected(prevState => {return {...prevState, internalText: `user updated count of ${id} to ${newCount}`}})
+            setChangeDetected(prevState => ({...prevState, internalText: `user updated count of ${id} to ${newCount}`}))
         }
     }
-
-    function searchItem(itemName) {
-        const currentCategory = groceryData.find(category => category.selected)
-        const itemId = currentCategory.items.find(item => item.name.toUpperCase() === itemName.toUpperCase())?.id
-        if (itemId) {
-            setGroceryData(prevData => prevData.map(category => {
-                if (category.id === currentCategory.id) {
-                    return {
-                        ...category, 
-                        items: category.items.map(item =>{
-                            if (item.highlighted) {
-                                return {...item, highlighted: false}
-                            } else {
-                                return (item.id === itemId) ? {...item, highlighted: true} : item
-                            }
-                        })
-                    }
-                } else return category
-            }
-            ))
-        }
-
-        setTimeout(() => {
-            setGroceryData(prevData => prevData.map(category =>
-                ({
-                    ...category,
-                    items: category.items.map(item => ({ ...item, highlighted: false }))
-                })
-                ))
-            }, 5000)
-        }
         
     const categoryElements = groceryData?.map(category =>
         <Category
@@ -155,7 +96,7 @@ export default function Home({
             key={category.id}
             id={category.id}
             selected={category.selected}
-            handleSelect={handleSelectedCategory}
+            handleSelect={() => setGroceryData(prevData => selectCategory(prevData, category.id))}
             handleClick={handleUserEvent}
         />
     )
@@ -186,7 +127,6 @@ export default function Home({
     }
     
     const onModalClose = (response) => {
-        console.log(response)
         setShowModal(false)
         if (response.canceled) {
             setChangeDetected(prevState => ({...prevState, alertText: 'Change cancelled'}))
@@ -255,7 +195,12 @@ export default function Home({
                         {itemElements}
                     </div>
                     <div className='side--buttons'>
-                        <SearchItemForm submitResponse={searchItem}/>
+                        <SearchItemForm submitResponse={name =>{
+                            setGroceryData(prevData => searchItem(prevData, name));
+                            setTimeout(() => {
+                                setGroceryData(prevData => cancelItemHighlight(prevData))
+                            }, 5000)
+                        }} />
                         <button
                             className='button--add'
                             onClick={event => handleUserEvent(event, 'add', 'item')}
@@ -263,7 +208,7 @@ export default function Home({
                     </div>
                 </div>
                 <hr className="break"></hr>
-                <ShoppingListContainer groceryData={groceryData} controlStrikeThrough={handleSelectedItem} />
+                <ShoppingListContainer groceryData={groceryData} controlStrikeThrough={event => setGroceryData(prevData => selectItem(prevData, event.target.id))} />
             </div>
         )
     }

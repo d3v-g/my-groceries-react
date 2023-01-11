@@ -10,7 +10,7 @@ export default function ShoppingListContainer({ groceryData, controlStrikeThroug
 
     const listElements = groceryData
         ?.map(data => 
-            <ShoppingListSection 
+            <ShoppingListSection
                 category={data}
                 items={data.items}
                 key={data.id}
