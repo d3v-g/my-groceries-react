@@ -72,8 +72,6 @@
 }
 
 .category, .button--add {
-    max-width: 200px;
-    height: fit-content;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
     background-color: #ffffff;
     border: none;
@@ -106,11 +104,8 @@
 }
 
 .button--add {
-    display: flex;
     gap: 10px;
-    align-items: center;
     margin-left: auto;
-    width: 160px;
 }
 
 .break {
@@ -290,7 +285,7 @@
 }
 
 .item {
-    max-width: 200px;
+    width: auto;
     height: 100px;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
     border-radius: 3px;

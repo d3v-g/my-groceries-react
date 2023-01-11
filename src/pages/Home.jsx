@@ -14,10 +14,10 @@ export default function Home({
     userLoggedIn, userId
 }) {
     // next todo: debug print pdf and download pdf difference
-    // next todo: enable item search
+    // next todo: enable scroll to searched item
     // next todo: get rid of spaces when inserting/updating database
     // nest todo: add price to items
-    // next todo: order items by count
+    // next todo: make width of category and item components adapt to length of its name
     
     const [groceryData, setGroceryData] = useState(null)
     
