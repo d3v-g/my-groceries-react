@@ -1,6 +1,7 @@
 import Category from '../components/Category'
 import Modal from '../components/Modal'
 import Item from '../components/Item'
+import SearchItemForm from '../forms/SearchItemForm'
 import ShoppingListContainer from '../components/ShoppingListContainer'
 import CategoryForm from '../forms/CategoryForm'
 import ItemForm from '../forms/ItemForm'
@@ -8,23 +9,19 @@ import DeleteForm from '../forms/DeleteForm'
 import { useState, useEffect } from 'react'
 import { Navigate } from 'react-router-dom'
 import { addItemCount, subtractItemCount, generateList } from '../api.js'
-import searchImg from '../assets/searchImg.png'
 
 export default function Home({
     userLoggedIn, userId
 }) {
     // next todo: debug print pdf and download pdf difference
-    const [alertText, setAlertText] = useState(null)
-    function showAlert(text) {
-        setAlertText(text)
-        setTimeout(() => {
-            setAlertText('')
-        }, 5000)
-    }
-
+    // next todo: enable item search
+    // next todo: get rid of spaces when inserting/updating database
+    // nest todo: add price to items
+    // next todo: order items by count
+    
     const [groceryData, setGroceryData] = useState(null)
-
-    const [changeDetected, setChangeDetected] = useState(null)
+    
+    const [changeDetected, setChangeDetected] = useState({alertText: '', internalText: ''})
 
     // console.log('grocery data', groceryData)
 
@@ -45,11 +42,11 @@ export default function Home({
     // ]
 
     useEffect(() => {
-        const currentCategoryId = groceryData?.find(data => data.selected).id
+        const currentCategoryId = groceryData?.find(data => data.selected)?.id
         generateList()
-            // .then(data => data.reduce((a, x) => {
-            //         a[x.id] = {...x, items: x.items.reduce((b, y) => {
-            //             b[y.id] = y
+            // .then(data => data.reduce((a, currentC) => {
+            //         a[currentC.id] = {...currentC, items: currentC.items.reduce((b, currentI) => {
+            //             b[currentI.id] = currentI
             //             return b
             //         }, {})
             // }
@@ -57,20 +54,35 @@ export default function Home({
             //     }, {})
             // )
             // .then(data => {
-            //     const property = 'd0bab6df-dbb5-46c3-9ec4-9d0c2e4877af'
-            //     const { [property]: object} = data
+            //     console.log('yo mo fo', data['d0bab6df-dbb5-46c3-9ec4-9d0c2e4877af']);
+            // })
+            // .then(data => {
+            //     const id = 'd0bab6df-dbb5-46c3-9ec4-9d0c2e4877af'
+            //     const { [id]: object } = data
             //     console.log(object)
             // })
 
             .then(data =>
                 currentCategoryId
-                    ?
+                ?
                     data.map(data => data.id === currentCategoryId ? { ...data, selected: true } : data)
                     :
                     data.map((data, index) => index === 0 ? { ...data, selected: true } : data))
             .then(data => setGroceryData(data))
+            
+    }, [changeDetected.internalText])
 
-    }, [changeDetected])
+    // useEffect(() => {
+    //     console.log('use effect fired')
+    //     function handleScroll(e) {
+    //         console.log('event listener fired', e)
+    //         this.scrollTop
+    //     }
+    //     const itemsEl = document.querySelectorAll('.item')
+    //     itemsEl.forEach(itemEl => itemEl.addEventListener('transitionrun', handleScroll))
+    //     return itemsEl.forEach(itemEl => itemEl.removeEventListener('transitionrun', handleScroll))
+    // }
+    // , [groceryData?.find(category => category.selected)?.items])
 
     function handleSelectedCategory(event) {
         const id = event.currentTarget.id
@@ -103,10 +115,41 @@ export default function Home({
     async function updateItemCount(id, count, addOrSubtract) {
         const newCount = (addOrSubtract === 'add') ? await addItemCount(id, count) : await subtractItemCount(id, count)
         if (newCount != null) {
-            setChangeDetected(`user updated count of ${id} to ${newCount}`)
+            setChangeDetected(prevState => {return {...prevState, internalText: `user updated count of ${id} to ${newCount}`}})
         }
     }
 
+    function searchItem(itemName) {
+        const currentCategory = groceryData.find(category => category.selected)
+        const itemId = currentCategory.items.find(item => item.name.toUpperCase() === itemName.toUpperCase())?.id
+        if (itemId) {
+            setGroceryData(prevData => prevData.map(category => {
+                if (category.id === currentCategory.id) {
+                    return {
+                        ...category, 
+                        items: category.items.map(item =>{
+                            if (item.highlighted) {
+                                return {...item, highlighted: false}
+                            } else {
+                                return (item.id === itemId) ? {...item, highlighted: true} : item
+                            }
+                        })
+                    }
+                } else return category
+            }
+            ))
+        }
+
+        setTimeout(() => {
+            setGroceryData(prevData => prevData.map(category =>
+                ({
+                    ...category,
+                    items: category.items.map(item => ({ ...item, highlighted: false }))
+                })
+                ))
+            }, 5000)
+        }
+        
     const categoryElements = groceryData?.map(category =>
         <Category
             name={category.name}
@@ -128,11 +171,12 @@ export default function Home({
                 count={item.count}
                 key={item.id}
                 id={item.id}
+                highlighted={item.highlighted ? true : false}
                 handleClick={handleUserEvent}
                 updateItemCount={updateItemCount}
             />
         )
-
+        
     const [userEvent, setUserEvent] = useState({ mode: '', target: '', id: '' })
     const [showModal, setShowModal] = useState(false)
 
@@ -141,15 +185,20 @@ export default function Home({
         const id = event.currentTarget.id
         setUserEvent({ mode, target, id })
     }
-
+    
     const onModalClose = (response) => {
         setShowModal(false)
         if (response.canceled) {
-            showAlert('Change cancelled')
+            setChangeDetected(prevState => ({...prevState, alertText: 'Change cancelled'}))
         } else {
             const action = `${userEvent.mode}${userEvent.mode != 'delete' ? 'ed' : 'd'}`
-            showAlert(`You have successfully ${action}: ${response.data[0]?.name}`)
-            setChangeDetected(`User ${action} grocery data: ${response.data[0].id}`)
+            setChangeDetected({
+                alertText: `You have successfully ${action}: ${response.data[0]?.name}`,
+                internalText: `User ${action} grocery data: ${response.data[0].id}`
+            })
+            setTimeout(() => {
+                setChangeDetected(prevState =>  ({...prevState, alertText: ''}))
+            }, 5000)
         }
     }
 
@@ -158,7 +207,7 @@ export default function Home({
     } else {
         return (
             <div className="container">
-                <p>{alertText}</p>
+                <p>{changeDetected.alertText}</p>
                 {showModal &&
                     <Modal onClose={onModalClose} title={`${userEvent.mode} a${userEvent.target === 'item' ? 'n' : ''} ${userEvent.target}`}>
                         {userEvent.mode === 'delete'
@@ -204,17 +253,7 @@ export default function Home({
                         {itemElements}
                     </div>
                     <div className='side--buttons'>
-                        <div className='items--search'>
-                            <input
-                                className='items--search--input'
-                                type='text'
-                                placeholder='Search for an item'
-                            >
-                            </input>
-                            <button className='items--search--button'>
-                                <img src={searchImg} />
-                            </button>
-                        </div>
+                        <SearchItemForm submitResponse={searchItem}/>
                         <button
                             className='button--add'
                             onClick={event => handleUserEvent(event, 'add', 'item')}

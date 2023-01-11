@@ -56,7 +56,7 @@
     display: flex;
     flex-direction: row;
     gap: 30px;
-    overflow-y: hidden;
+    overflow-y: scroll;
 }
 
 .category > p {
@@ -135,7 +135,7 @@
 }
 
 .items {
-    overflow-y: hidden;
+    overflow-y: scroll;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -297,11 +297,16 @@
     margin-left: 20px;
     padding: 15px;
     font-family: 'Roboto';
+    transition: border 0.5s;
 
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
+}
+
+.item--active {
+    border: 2px solid #4D653E;
 }
 
 .item--title {

@@ -4,8 +4,10 @@ import { supabase } from '../supabaseClient'
 
 
 
-export default function CategoryForm({ initialData, onClose, userId, mode }) { 
+export default function CategoryForm({ initialData, onClose, userId, mode }) {
+    
     const { register, handleSubmit, formState: { errors } } = useForm()
+
     const onSubmit = async (formData) => {
         let data = null, error = null
         if(mode === 'add') {

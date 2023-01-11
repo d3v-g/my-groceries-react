@@ -4,12 +4,10 @@ import subtractImage from '../assets/subtract.png'
 import addItemImage from '../assets/add-item.png'
 
 export default function Item({
-    name, note, count, id, handleClick, updateItemCount
+    name, note, count, id, highlighted, handleClick, updateItemCount
 }) {
-    // todo: use the change detection mechanism in home component
-
     return (
-        <div className='item'>
+        <div className={`item ${highlighted ? 'item--active' : ''}`}>
             <div className='item--title'>
                 <p>{name}</p>
                 <button
