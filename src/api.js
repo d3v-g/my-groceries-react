@@ -38,7 +38,7 @@ export async function generateList() {
                 count
             )
         `)
-        .order('created_at', { foreignTable: 'items' })
+        .order('count', { foreignTable: 'items', ascending: false })
         .order('created_at')
     if (error) {
         console.error(error)
