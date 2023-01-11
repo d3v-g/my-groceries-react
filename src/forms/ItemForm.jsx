@@ -2,21 +2,23 @@ import { useForm } from 'react-hook-form'
 import { useEffect } from 'react'
 import { supabase } from '../supabaseClient'
 
-export default function ItemForm({initialData, onClose, userId, mode, parentCategoryId}) {
+export default function ItemForm({initialData, onClose, user_id, mode, parent_category_id}) {
 
     const { register, handleSubmit, formState: { errors } } = useForm()
 
     const onSubmit = async (formData) => {
+        const name = formData.name.trim()
+        const note = formData.note.trim()
         let data = null, error = null
         if(mode === 'add') {
              ({ data, error } = await supabase
                .from('items')
-               .insert({ name: formData.name,note: formData.itemNote, count: 1, user_id: userId, parent_category_id: parentCategoryId })
+               .insert({ name, note, count: 1, user_id, parent_category_id })
                .select())
         } else {
              ({ data, error } = await supabase
                 .from('items')
-                .update({ name: formData.name, note: formData.itemNote })
+                .update({ name, note })
                 .eq('id', initialData.id)
                 .select())
         }
@@ -59,7 +61,7 @@ export default function ItemForm({initialData, onClose, userId, mode, parentCate
                 {errors.name?.type === 'required' && <p role="alert">Item name is required</p>}
                 {errors.name?.type === 'maxLength' && <p role="alert">Maximum item length is 20 characters</p>}
 
-                <label htmlFor='itemNote' className='form--question'>
+                <label htmlFor='note' className='form--question'>
                     Add an optional note:
                 </label>
                 <input
@@ -67,7 +69,7 @@ export default function ItemForm({initialData, onClose, userId, mode, parentCate
                     type='text'
                     placeholder='e.g. royal gala'
                     defaultValue={initialData?.note}
-                    {...register('itemNote', { maxLength: 40 })}
+                    {...register('note', { maxLength: 40 })}
                 />
                 {errors.itemNote?.type === 'maxLength' && <p role='alert'>Maximum note length is 40 characters</p>}
                 

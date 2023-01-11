@@ -2,23 +2,22 @@ import { useForm } from "react-hook-form"
 import { useEffect } from 'react'
 import { supabase } from '../supabaseClient'
 
-
-
-export default function CategoryForm({ initialData, onClose, userId, mode }) {
+export default function CategoryForm({ initialData, onClose, user_id, mode }) {
     
     const { register, handleSubmit, formState: { errors } } = useForm()
 
     const onSubmit = async (formData) => {
+        const name = formData.name.trim()
         let data = null, error = null
         if(mode === 'add') {
              ({ data, error } = await supabase
                .from('categories')
-               .insert({ name: formData.name, user_id: userId })
+               .insert({ name, user_id })
                .select())
         } else {
              ({ data, error } = await supabase
                 .from('categories')
-                .update({ name: formData.name })
+                .update({ name })
                 .eq('id', initialData.id)
                 .select())
         }

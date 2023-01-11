@@ -222,16 +222,16 @@ export default function Home({
                                 <CategoryForm
                                     initialData={groceryData.find(c => c.id === userEvent.id)}
                                     onClose={onModalClose}
-                                    userId={userId}
+                                    user_id={userId}
                                     mode={userEvent.mode}
                                 />
                                 :
                                 <ItemForm
                                     initialData={groceryData.filter(c => c.selected)[0].items.find(i => i.id === userEvent.id)}
                                     onClose={onModalClose}
-                                    userId={userId}
+                                    user_id={userId}
                                     mode={userEvent.mode}
-                                    parentCategoryId={groceryData.find(data => data.selected).id}
+                                    parent_category_id={groceryData.find(data => data.selected).id}
                                 />
                             )
                         }
