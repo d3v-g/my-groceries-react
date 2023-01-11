@@ -11,11 +11,10 @@ import { Navigate } from 'react-router-dom'
 import { addItemCount, subtractItemCount, generateList } from '../api.js'
 
 export default function Home({
-    userLoggedIn, userId
+    userLoggedIn
 }) {
     // next todo: debug print pdf and download pdf difference
     // next todo: enable scroll to searched item
-    // next todo: get rid of spaces when inserting/updating database
     // nest todo: add price to items
     // next todo: make width of category and item components adapt to length of its name
     
@@ -187,14 +186,15 @@ export default function Home({
     }
     
     const onModalClose = (response) => {
+        console.log(response)
         setShowModal(false)
         if (response.canceled) {
             setChangeDetected(prevState => ({...prevState, alertText: 'Change cancelled'}))
         } else {
             const action = `${userEvent.mode}${userEvent.mode != 'delete' ? 'ed' : 'd'}`
             setChangeDetected({
-                alertText: `You have successfully ${action}: ${response.data[0]?.name}`,
-                internalText: `User ${action} grocery data: ${response.data[0].id}`
+                alertText: `You have successfully ${action}: ${response.data.name}`,
+                internalText: `User ${action} grocery data: ${response.data.id}`
             })
             setTimeout(() => {
                 setChangeDetected(prevState =>  ({...prevState, alertText: ''}))
@@ -213,8 +213,12 @@ export default function Home({
                         {userEvent.mode === 'delete'
                             ?
                             <DeleteForm
-                                initialData={userEvent.target === 'category' ? groceryData.find(c => c.id === userEvent.id) : groceryData.filter(c => c.selected)[0].items.find(i => i.id === userEvent.id)}
-                                onClose={onModalClose} userId={userId} target={userEvent.target}
+                                initialData={
+                                    userEvent.target === 'category' 
+                                        ? groceryData.find(c => c.id === userEvent.id) 
+                                        : groceryData.filter(c => c.selected)[0].items.find(i => i.id === userEvent.id)
+                                }
+                                onClose={onModalClose} target={userEvent.target}
                             />
                             :
                             (userEvent.target === 'category'
@@ -222,14 +226,12 @@ export default function Home({
                                 <CategoryForm
                                     initialData={groceryData.find(c => c.id === userEvent.id)}
                                     onClose={onModalClose}
-                                    user_id={userId}
                                     mode={userEvent.mode}
                                 />
                                 :
                                 <ItemForm
                                     initialData={groceryData.filter(c => c.selected)[0].items.find(i => i.id === userEvent.id)}
                                     onClose={onModalClose}
-                                    user_id={userId}
                                     mode={userEvent.mode}
                                     parent_category_id={groceryData.find(data => data.selected).id}
                                 />

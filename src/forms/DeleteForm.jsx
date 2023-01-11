@@ -1,22 +1,12 @@
-import { supabase } from '../supabaseClient'
 import { useEffect } from 'react'
+import { handleDelete } from '../api'
 
 export default function DeleteForm({ initialData, onClose, target }) {
-    async function handleDelete() {
-        const { error } = await supabase
-            .from(target === 'category' ? 'categories' : 'items')//select categories or items table
-            .delete()
-            .eq('id', initialData.id)
-        if (error) {
-            console.error(error)
-        } else {
-            onClose({canceled: false, data: [initialData]})
-        }
-    }    
 
     function handleKeyDown(event) {
         if (event.code === 'Enter' || event.code === 'NumpadEnter') {
-            handleDelete()
+            handleDelete(target, initialData.id)
+                .then(() => onClose({canceled: false, data: initialData}))
         }
         else if (event.code === 'Escape') {
             onClose({canceled: true, data: null})
@@ -36,7 +26,12 @@ export default function DeleteForm({ initialData, onClose, target }) {
             <p className='form--question'>{`Are you sure you want to delete this ${target}: ${initialData.name}?`}</p>
             {target === 'category' && <p className='form--warning' role='alert'>Please note, deleting a category will subsequently delete ALL ITEMS in that category</p>}
             <div className='form--buttons form--buttons--delete'>
-                <button className='button--red' onClick={handleDelete}>Yes, delete</button>
+                <button className='button--red' 
+                    onClick={() =>
+                        handleDelete(target, initialData.id)
+                            .then(() => onClose({canceled: false, data: initialData}))
+                    }
+                >Yes, delete</button>
                 <button className='button--green'onClick={() => onClose({canceled: true, data: null})}>No, do not delete</button>
             </div>
         </div>

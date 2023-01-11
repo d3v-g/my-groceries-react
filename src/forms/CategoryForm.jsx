@@ -1,29 +1,20 @@
 import { useForm } from "react-hook-form"
 import { useEffect } from 'react'
-import { supabase } from '../supabaseClient'
+import { addCategory, updateCategory } from "../api"
 
-export default function CategoryForm({ initialData, onClose, user_id, mode }) {
+export default function CategoryForm({ initialData, onClose, mode }) {
     
     const { register, handleSubmit, formState: { errors } } = useForm()
 
     const onSubmit = async (formData) => {
         const name = formData.name.trim()
-        let data = null, error = null
-        if(mode === 'add') {
-             ({ data, error } = await supabase
-               .from('categories')
-               .insert({ name, user_id })
-               .select())
-        } else {
-             ({ data, error } = await supabase
-                .from('categories')
-                .update({ name })
-                .eq('id', initialData.id)
-                .select())
-        }
-        if (data) {
-            onClose({canceled: false, data})
-        } else console.error(error)
+        mode === 'add'
+            ?
+            addCategory(name)
+                .then(data => onClose({canceled: false, data}))
+            :
+            updateCategory(name, initialData.id)
+                .then(data => onClose({canceled: false, data}))
     }
     
     function handleKeyDown(event) {

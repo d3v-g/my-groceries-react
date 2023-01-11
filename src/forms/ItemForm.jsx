@@ -1,30 +1,21 @@
 import { useForm } from 'react-hook-form'
 import { useEffect } from 'react'
-import { supabase } from '../supabaseClient'
+import { addItem, updateItem } from '../api'
 
-export default function ItemForm({initialData, onClose, user_id, mode, parent_category_id}) {
+export default function ItemForm({initialData, onClose, mode, parent_category_id}) {
 
     const { register, handleSubmit, formState: { errors } } = useForm()
 
     const onSubmit = async (formData) => {
         const name = formData.name.trim()
         const note = formData.note.trim()
-        let data = null, error = null
-        if(mode === 'add') {
-             ({ data, error } = await supabase
-               .from('items')
-               .insert({ name, note, count: 1, user_id, parent_category_id })
-               .select())
-        } else {
-             ({ data, error } = await supabase
-                .from('items')
-                .update({ name, note })
-                .eq('id', initialData.id)
-                .select())
-        }
-        if (data) {
-            onClose({canceled: false, data})
-        } else console.error(error)
+        mode === 'add'
+            ?
+            addItem(name, note, parent_category_id)
+                .then(data => onClose({canceled: false, data}))
+            :
+            updateItem(name, note, initialData.id)
+                .then(data => onClose({canceled: false, data}))
     }
 
     function handleKeyDown(event) {
