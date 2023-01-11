@@ -4,34 +4,35 @@ import subtractImage from '../assets/subtract.png'
 import addItemImage from '../assets/add-item.png'
 
 export default function Item({
-    name, note, count, id, highlighted, handleClick, updateItemCount
+    item, handleClick, updateItemCount
 }) {
     return (
-        <div className={`item ${highlighted ? 'item--active' : ''}`}>
+        <div className={`item ${item.highlighted ? 'item--active' : ''}`}>
             <div className='item--title'>
-                <p>{name}</p>
+                <p>{item.name}</p>
                 <button
                     className='edit--button'
-                    id={id}
+                    id={item.id}
                     onClick={event => {handleClick(event, 'edit', 'item')}}>
                     <img src={editImage} />
                 </button >
                 <button
                     className='delete--button'
-                    id={id}
+                    id={item.id}
                     onClick={event => handleClick(event, 'delete', 'item')} 
                 >
                     <img src={deleteImage} />
                 </button>
                 
             </div>
-            <p className='item--note'>note: {note ?? ''}</p>
+            <p className='item--price'>{item.price}</p>
+            <p className='item--note'>note: {item.note ?? ''}</p>
             <div className='item--count'>
-                <button onClick={() => {updateItemCount(id, count, 'subtract')}}>
+                <button onClick={() => {updateItemCount(item.id, item.count, 'subtract')}}>
                     <img src={subtractImage} />
                 </button>
-                <p className='item--count'>{count}</p>
-                <button onClick={() => {updateItemCount(id, count, 'add')}}>
+                <p className='item--count'>{item.count}</p>
+                <button onClick={() => {updateItemCount(item.id, item.count, 'add')}}>
                     <img src={addItemImage} />
                 </button>
             </div>

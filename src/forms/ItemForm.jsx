@@ -9,12 +9,13 @@ export default function ItemForm({initialData, onClose, mode, parent_category_id
     const onSubmit = async (formData) => {
         const name = formData.name.trim()
         const note = formData.note.trim()
+        const price = formData.price
         mode === 'add'
             ?
-            addItem(name, note, parent_category_id)
+            addItem(name, price, note, parent_category_id)
                 .then(data => onClose({canceled: false, data}))
             :
-            updateItem(name, note, initialData.id)
+            updateItem(name, price, note, initialData.id)
                 .then(data => onClose({canceled: false, data}))
     }
 
@@ -38,7 +39,6 @@ export default function ItemForm({initialData, onClose, mode, parent_category_id
     return (
         <div>
             <form className='modal--form' onSubmit={handleSubmit(onSubmit)}>
-                {/* register your input into the hook by invoking the "register" function */}
                 <label htmlFor='name' className='form--question'>
                     {mode === 'add' ? 'Enter an item:' : 'Edit item'}
                 </label>
@@ -51,6 +51,18 @@ export default function ItemForm({initialData, onClose, mode, parent_category_id
                 />
                 {errors.name?.type === 'required' && <p role="alert">Item name is required</p>}
                 {errors.name?.type === 'maxLength' && <p role="alert">Maximum item length is 20 characters</p>}
+                <label htmlFor='price' className='form--question'>
+                    Add item price:
+                </label>
+                <input 
+                    className='form--input'
+                    type='number'
+                    step='0.01'
+                    defaultValue={initialData?.price ?? 0}
+                    {...register('price', { valueAsNumber: true, required: true })}
+                />
+                {errors.price?.type === 'valueAsNumber' && <p role="alert">Item price must be a number</p>}
+                {errors.price?.type === 'required' && <p role="alert">Item price is required</p>}
 
                 <label htmlFor='note' className='form--question'>
                     Add an optional note:
@@ -58,7 +70,7 @@ export default function ItemForm({initialData, onClose, mode, parent_category_id
                 <input
                     className='form--input'
                     type='text'
-                    placeholder='e.g. royal gala'
+                    placeholder='e.g. pack of 4'
                     defaultValue={initialData?.note}
                     {...register('note', { maxLength: 40 })}
                 />

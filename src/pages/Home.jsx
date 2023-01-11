@@ -16,7 +16,8 @@ export default function Home({
 }) {
     // next todo: debug print pdf and download pdf difference
     // next todo: enable scroll to searched item
-    // nest todo: add price to items
+    // next todo: enable item dragging
+    // next todo: enable currency choosing
     
     const [groceryData, setGroceryData] = useState(null)
     
@@ -92,10 +93,8 @@ export default function Home({
         
     const categoryElements = groceryData?.map(category =>
         <Category
-            name={category.name}
+            category={category}
             key={category.id}
-            id={category.id}
-            selected={category.selected}
             handleSelect={() => setGroceryData(prevData => selectCategory(prevData, category.id))}
             handleClick={handleUserEvent}
         />
@@ -106,12 +105,8 @@ export default function Home({
         ?.items
         ?.map(item =>
             <Item
-                name={item.name}
-                note={item.note}
-                count={item.count}
+                item={item}
                 key={item.id}
-                id={item.id}
-                highlighted={item.highlighted ? true : false}
                 handleClick={handleUserEvent}
                 updateItemCount={updateItemCount}
             />
@@ -134,7 +129,7 @@ export default function Home({
             const action = `${userEvent.mode}${userEvent.mode != 'delete' ? 'ed' : 'd'}`
             setChangeDetected({
                 alertText: `You have successfully ${action}: ${response.data.name}`,
-                internalText: `User ${action} grocery data: ${response.data.id}`
+                internalText: `User ${action} grocery data to: ${response.data.id}, ${response.data.name}, ${response.data.price}, ${response.data.note}`
             })
             setTimeout(() => {
                 setChangeDetected(prevState =>  ({...prevState, alertText: ''}))

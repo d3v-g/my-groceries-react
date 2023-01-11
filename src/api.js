@@ -24,20 +24,20 @@ export async function updateCategory(name, id) {
     } else return data[0]
 }
 
-export async function addItem(name, note, parent_category_id) {
+export async function addItem(name, price, note, parent_category_id) {
     const { data, error } = await supabase
         .from('items')
-        .insert({ name, note, count: 1, user_id, parent_category_id })
+        .insert({ name, price, note, count: 1, user_id, parent_category_id })
         .select()
     if (error) {
         console.error(error)
     } else return data[0]
 }
 
-export async function updateItem(name, note, id) {
+export async function updateItem(name, price, note, id) {
     const { data, error } = await supabase
         .from('items')
-        .update({ name, note })
+        .update({ name, price, note })
         .eq('id', id)
         .select()
     if (error) {
@@ -90,7 +90,8 @@ export async function generateList() {
                 id,
                 name,
                 note,
-                count
+                count,
+                price
             )
         `)
         .order('count', { foreignTable: 'items', ascending: false })

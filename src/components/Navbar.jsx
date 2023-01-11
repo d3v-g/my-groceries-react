@@ -5,7 +5,7 @@ export default function Navbar({ userLoggedIn, logOut}) {
             <div className="navbar">
                 <p className="navbar--title">
                     <Link to='/'>
-                        MyGroceries
+                        My Groceries
                     </Link>
                 </p>
                 {userLoggedIn

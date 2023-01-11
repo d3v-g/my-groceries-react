@@ -9,6 +9,7 @@ export default function ListComponent({ category, items, controlStrikeThrough })
                     {item.count > 0 && `${item.name}  x ${item.count}`}
                 </p>
                 <p>{item.note && `note: ${item.note}` }</p>
+                <p>{item.price * item.count}</p>
             </div>
         )
     })
@@ -17,7 +18,7 @@ export default function ListComponent({ category, items, controlStrikeThrough })
         <div className='list--component'>
             {itemElements.length > 0 && 
                 <p
-                    className={`list--category`}
+                    className={'list--category'}
                     id={category.id}
                     name={category.name}
                 >{category.name}</p>

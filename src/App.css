@@ -39,7 +39,6 @@
 
 .container {
     padding: 40px;
-    padding-right: 100px;
     display: flex;
     flex-direction: column;
 }
@@ -385,11 +384,16 @@
     padding: 20px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 10px;
+}
+
+.list--total {
+    margin-left: auto;
+    font-size: 22px;
 }
 
 .list--category {
-    font-size:larger;
+    font-size: 22px;
     margin-bottom: 5px;
 }
 
@@ -399,6 +403,7 @@
     flex-direction: row;
     justify-content: space-between;
     cursor: pointer;
+    font-size: 18px;
 
     -webkit-user-select: none; /* Safari */
     -ms-user-select: none; /* IE 10 and IE 11 */

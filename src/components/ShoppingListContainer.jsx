@@ -3,6 +3,7 @@ import { useState, useRef } from 'react'
 import ReactToPrint from 'react-to-print'
 import JsPDF from 'jspdf'
 import { DateTime } from 'luxon'
+import { calculateTotal } from '../helpers'
 
 export default function ShoppingListContainer({ groceryData, controlStrikeThrough }) {
     const [isCopied, setIsCopied] = useState(false)
@@ -66,6 +67,7 @@ export default function ShoppingListContainer({ groceryData, controlStrikeThroug
                     </div>
                 </div>
                 <div className='list--content' ref={(el) => (componentRef = el)}>
+                    <p className='list--total'>Total: {calculateTotal(groceryData)}</p>
                     {listElements}
                 </div>
         </div>

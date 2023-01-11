@@ -54,3 +54,11 @@ export function cancelItemHighlight(data) {
         })
     )
 }
+
+export function calculateTotal(data) {
+    return data?.reduce((prevVal, currCat) => {
+        return prevVal + currCat.items.reduce((prevVal, currItem) => {
+            return prevVal + currItem.price * currItem.count
+        }, 0)
+    }, 0)
+}
