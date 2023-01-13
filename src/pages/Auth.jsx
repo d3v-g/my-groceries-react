@@ -83,7 +83,7 @@ export default function Auth({userLoggedIn}) {
     } else {
         return (
             <div className='container'>
-                <p className='auth--alertText'>{alertText}</p>
+                {alertText && <p className='alertText' role='alert'>{alertText}</p>}
                 <button className='auth--button' onClick={() => setAuthType('LOGIN')}>
                     Log in</button>
                 <p>Don't have an account? Sign up now</p>

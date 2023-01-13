@@ -3,9 +3,9 @@ import { useState, useRef } from 'react'
 import ReactToPrint from 'react-to-print'
 import JsPDF from 'jspdf'
 import { DateTime } from 'luxon'
-import { calculateTotal } from '../helpers'
+import { calculateTotal, formatPrice } from '../helpers'
 
-export default function ShoppingListContainer({ groceryData, controlStrikeThrough }) {
+export default function ShoppingListContainer({ groceryData, currency, controlStrikeThrough }) {
     const [isCopied, setIsCopied] = useState(false)
     let componentRef = useRef()
 
@@ -14,6 +14,7 @@ export default function ShoppingListContainer({ groceryData, controlStrikeThroug
             <ShoppingListSection
                 category={data}
                 items={data.items}
+                currency={currency}
                 key={data.id}
                 controlStrikeThrough={controlStrikeThrough}
             />
@@ -67,7 +68,7 @@ export default function ShoppingListContainer({ groceryData, controlStrikeThroug
                     </div>
                 </div>
                 <div className='list--content' ref={(el) => (componentRef = el)}>
-                    <p className='list--total'>Total: {calculateTotal(groceryData)}</p>
+                    <p className='list--total'>Total: {formatPrice(currency, calculateTotal(groceryData))}</p>
                     {listElements}
                 </div>
         </div>

@@ -6,8 +6,8 @@ export default function SearchItemForm({ submitResponse }) {
     const { register, handleSubmit, formState: { errors } } = useForm()
 
     return (
-        <div className='items--search'>
-            <form onSubmit={handleSubmit(formData => submitResponse(formData.name))}>
+        <div>
+            <form className='items--search' onSubmit={handleSubmit(formData => submitResponse(formData.name))}>
                 <input
                     className='items--search--input'
                     type='text'

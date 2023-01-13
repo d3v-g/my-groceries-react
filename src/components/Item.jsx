@@ -2,9 +2,10 @@ import deleteImage from '../assets/delete.png'
 import editImage from '../assets/edit.png'
 import subtractImage from '../assets/subtract.png'
 import addItemImage from '../assets/add-item.png'
+import { formatPrice } from '../helpers'
 
 export default function Item({
-    item, handleClick, updateItemCount
+    item, currency, handleClick, updateItemCount
 }) {
     return (
         <div className={`item ${item.highlighted ? 'item--active' : ''}`}>
@@ -25,7 +26,7 @@ export default function Item({
                 </button>
                 
             </div>
-            <p className='item--price'>{item.price}</p>
+            <p className='item--price'>{formatPrice(currency, item.price)}</p>
             <p className='item--note'>note: {item.note ?? ''}</p>
             <div className='item--count'>
                 <button onClick={() => {updateItemCount(item.id, item.count, 'subtract')}}>

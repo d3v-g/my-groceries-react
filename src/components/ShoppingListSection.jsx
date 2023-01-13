@@ -1,5 +1,8 @@
-export default function ListComponent({ category, items, controlStrikeThrough }) {
+import { formatPrice } from "../helpers"
 
+export default function ListComponent(
+    { category, items, currency, controlStrikeThrough }
+) {
     const itemElements = items
         .filter(item => item.count > 0)
         .map(item => {
@@ -9,7 +12,7 @@ export default function ListComponent({ category, items, controlStrikeThrough })
                     {item.count > 0 && `${item.name}  x ${item.count}`}
                 </p>
                 <p>{item.note && `note: ${item.note}` }</p>
-                <p>{item.price * item.count}</p>
+                <p>{formatPrice(currency, item.price * item.count)}</p>
             </div>
         )
     })

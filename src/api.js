@@ -102,3 +102,27 @@ export async function generateList() {
         return data
     }
 }
+
+export async function getUserCurrency() {
+    const { data, error } = await supabase
+        .from('profiles')
+        .select('currency')
+    if (error) {
+        console.error(error)
+    } else {
+        return data[0].currency
+    }
+}
+
+export async function updateUserCurrency(currency) {
+    const { data, error } = await supabase
+        .from('profiles')
+        .update({currency: currency})
+        .eq('id', user_id)
+        .select('currency')
+    if (error) {
+        console.error(error)
+    } else {
+        return data[0].currency
+    }
+}

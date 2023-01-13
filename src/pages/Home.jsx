@@ -6,9 +6,10 @@ import ShoppingListContainer from '../components/ShoppingListContainer'
 import CategoryForm from '../forms/CategoryForm'
 import ItemForm from '../forms/ItemForm'
 import DeleteForm from '../forms/DeleteForm'
+import CurrencyForm from '../forms/CurrencyForm'
 import { useState, useEffect } from 'react'
 import { Navigate } from 'react-router-dom'
-import { addItemCount, subtractItemCount, generateList } from '../api.js'
+import { addItemCount, subtractItemCount, generateList, getUserCurrency, updateUserCurrency } from '../api.js'
 import { selectCategory, selectItem, searchItem, cancelItemHighlight } from '../helpers.js'
 
 export default function Home({
@@ -17,51 +18,19 @@ export default function Home({
     // next todo: debug print pdf and download pdf difference
     // next todo: enable scroll to searched item
     // next todo: enable item dragging
-    // next todo: enable currency choosing
     
     const [groceryData, setGroceryData] = useState(null)
-    
+    const [currency, setCurrency] = useState(null)
     const [changeDetected, setChangeDetected] = useState({alertText: '', internalText: ''})
 
-    // console.log('grocery data', groceryData)
-
-    // It would be more ideal to change the data structure so that each entry as key is the id of the thing
-    // Either do this in the db or at the data retrieval point from supabase
-    // e.g. you have: 
-    // [
-    //     0: {id: 123, items:[]},  
-    //     1: {id: 124, items: [0:{id:8, name:"a"}, 1:{id:9, name:"b"}, 2:{id:10, name:"c"}]}
-    //     1: {id: 125, category: "pills", items: [0:{id:11, name:"d"}]}
-    // ]
-    // we want instead IDs more accessible, don't worry about the slight duplication of having id as key and also inside the value object e.g.:
-    // NOTE YOU MOST LIKELY WILL BE ABLE TO DO SOMETHING NICE AND CLEVER WITH DE-STRUCTURING SYNTAX
-    // [
-    //     123: {id: 123, items:[]},  
-    //     124: {id: 124, items: [8:{id:8, name:"a"}, 9:{id:9, name:"b"}, 10:{id:10, name:"c"}]}
-    //     125: {id: 125, category: "pills", items: [11:{id:11, name:"d"}]}
-    // ]
+    useEffect(() => {
+        getUserCurrency()
+            .then(data => setCurrency(data))
+    }, [])
 
     useEffect(() => {
         const currentCategoryId = groceryData?.find(data => data.selected)?.id
         generateList()
-            // .then(data => data.reduce((a, currentC) => {
-            //         a[currentC.id] = {...currentC, items: currentC.items.reduce((b, currentI) => {
-            //             b[currentI.id] = currentI
-            //             return b
-            //         }, {})
-            // }
-            //     return a
-            //     }, {})
-            // )
-            // .then(data => {
-            //     console.log('yo mo fo', data['d0bab6df-dbb5-46c3-9ec4-9d0c2e4877af']);
-            // })
-            // .then(data => {
-            //     const id = 'd0bab6df-dbb5-46c3-9ec4-9d0c2e4877af'
-            //     const { [id]: object } = data
-            //     console.log(object)
-            // })
-
             .then(data =>
                 currentCategoryId
                 ?
@@ -69,7 +38,6 @@ export default function Home({
                     :
                     data.map((data, index) => index === 0 ? { ...data, selected: true } : data))
             .then(data => setGroceryData(data))
-            
     }, [changeDetected.internalText])
 
     // useEffect(() => {
@@ -107,6 +75,7 @@ export default function Home({
             <Item
                 item={item}
                 key={item.id}
+                currency={currency}
                 handleClick={handleUserEvent}
                 updateItemCount={updateItemCount}
             />
@@ -131,10 +100,10 @@ export default function Home({
                 alertText: `You have successfully ${action}: ${response.data.name}`,
                 internalText: `User ${action} grocery data to: ${response.data.id}, ${response.data.name}, ${response.data.price}, ${response.data.note}`
             })
-            setTimeout(() => {
-                setChangeDetected(prevState =>  ({...prevState, alertText: ''}))
-            }, 5000)
         }
+        setTimeout(() => {
+            setChangeDetected(prevState =>  ({...prevState, alertText: ''}))
+        }, 5000)
     }
 
     if (!userLoggedIn) {
@@ -142,7 +111,7 @@ export default function Home({
     } else {
         return (
             <div className="container">
-                <p>{changeDetected.alertText}</p>
+                {changeDetected.alertText && <p className='alertText' role='alert'>{changeDetected.alertText}</p>}
                 {showModal &&
                     <Modal onClose={onModalClose} title={`${userEvent.mode} a${userEvent.target === 'item' ? 'n' : ''} ${userEvent.target}`}>
                         {userEvent.mode === 'delete'
@@ -189,7 +158,13 @@ export default function Home({
                     <div className='items'>
                         {itemElements}
                     </div>
-                    <div className='side--buttons'>
+                    <div className='items--side'>
+                        <CurrencyForm 
+                            currency={currency} 
+                            submitResponse={res => 
+                                updateUserCurrency(res)
+                                    .then(currency => setCurrency(currency))}
+                        />
                         <SearchItemForm submitResponse={name =>{
                             setGroceryData(prevData => searchItem(prevData, name));
                             setTimeout(() => {
@@ -203,9 +178,16 @@ export default function Home({
                     </div>
                 </div>
                 <hr className="break"></hr>
-                <ShoppingListContainer groceryData={groceryData} controlStrikeThrough={event => setGroceryData(prevData => selectItem(prevData, event.target.id))} />
+                <ShoppingListContainer
+                    groceryData={groceryData}
+                    currency={currency}
+                    controlStrikeThrough={event =>
+                        setGroceryData(prevData =>
+                            selectItem(prevData, event.target.id)
+                        )
+                    }
+                />
             </div>
         )
     }
-
 }

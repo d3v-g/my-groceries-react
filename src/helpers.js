@@ -62,3 +62,7 @@ export function calculateTotal(data) {
         }, 0)
     }, 0)
 }
+
+export function formatPrice(currency, num) {
+    return `${currency} ${num?.toFixed(2)}`
+}
