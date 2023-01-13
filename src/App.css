@@ -299,7 +299,7 @@
 }
 
 .item {
-    width: 250px;
+    width: auto;
     height: 120px;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
     border-radius: 3px;
