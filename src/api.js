@@ -1,7 +1,14 @@
 import { supabase } from './supabaseClient'
 
-const { data } = await supabase.from('profiles').select('*')
-const user_id = data[0].id
+async function getUserId() {
+    const { data } = await supabase.from('profiles').select('id')
+    return data[0].id
+}
+
+let user_id 
+
+getUserId()
+    .then(id => user_id = id)
 
 export async function addCategory(name) {
     const { data, error } = await supabase
