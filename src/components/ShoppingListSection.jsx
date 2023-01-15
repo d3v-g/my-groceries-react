@@ -16,17 +16,17 @@ export default function ListComponent(
             </div>
         )
     })
-
-    return (
-        <div className='list--component'>
-            {itemElements.length > 0 && 
-                <p
-                    className={'list--category'}
-                    id={category.id}
-                    name={category.name}
-                >{category.name}</p>
-            }
-            {itemElements}
-        </div>
-    )
+    
+    if (itemElements.length > 0) {
+        return (
+            <div className='list--component'>
+                    <p
+                        className={'list--category'}
+                        id={category.id}
+                        name={category.name}
+                    >{category.name}</p>
+                {itemElements}
+            </div>
+        )
+    }
 }
