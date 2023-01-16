@@ -2,13 +2,34 @@ import { supabase } from './supabaseClient'
 
 async function getUserId() {
     const { data } = await supabase.from('profiles').select('id')
-    return data[0].id
+    return data[0]?.id
 }
 
 let user_id 
 
 getUserId()
-    .then(id => user_id = id)
+    ?.then(id => user_id = id)
+
+export async function handleLogIn(email, password) {
+    const { user, error } = await supabase.auth.signInWithPassword({ email, password })
+    if (error) {
+        return error?.error_description || error?.message
+    }
+}
+
+export async function handleRegister(email, password, passwordConf) {
+    if (password === passwordConf) {
+        const { user, error } = await supabase.auth.signUp({ 
+            email, 
+            password,
+            options: {data: {'email': email} }})
+        if (error) {
+            return error?.error_description || error?.message
+        } else return 'Please check your email for a verification link.'
+    }
+    else if (passwordConf && password)
+        return 'Passwords do not match.'
+}
 
 export async function addCategory(name) {
     const { data, error } = await supabase
