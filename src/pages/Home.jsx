@@ -15,7 +15,6 @@ import { selectCategory, selectItem, searchItem, cancelItemHighlight } from '../
 export default function Home({
     userLoggedIn
 }) {
-    // next todo: debug print pdf and download pdf difference
     // next todo: enable scroll to searched item
     // next todo: enable item dragging
     

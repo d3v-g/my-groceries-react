@@ -39,7 +39,7 @@ export default function ShoppingListContainer({ groceryData, currency, controlSt
     }
     
     function handleDownload() {
-        const pdf = new JsPDF
+        const pdf = new JsPDF('portrait','pt','a4')
         pdf.html(componentRef).then(() => pdf.save(`shopping_list_${DateTime.now().toFormat('MM_dd_yyyy')}.pdf`))
     }
 
