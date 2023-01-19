@@ -64,5 +64,5 @@ export function calculateTotal(data) {
 }
 
 export function formatPrice(currency, num) {
-    return `${currency} ${num?.toFixed(2)}`
+    return (currency && num != null) ? `${currency} ${num?.toFixed(2)}` : ''
 }
