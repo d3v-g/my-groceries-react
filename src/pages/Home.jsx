@@ -1,7 +1,6 @@
 import Category from '../components/Category'
 import Modal from '../components/Modal'
 import Item from '../components/Item'
-import SearchItemForm from '../forms/SearchItemForm'
 import ShoppingListContainer from '../components/ShoppingListContainer'
 import CategoryForm from '../forms/CategoryForm'
 import ItemForm from '../forms/ItemForm'
@@ -10,13 +9,11 @@ import CurrencyForm from '../forms/CurrencyForm'
 import { useState, useEffect } from 'react'
 import { Navigate } from 'react-router-dom'
 import { addItemCount, subtractItemCount, generateList, getUserCurrency, updateUserCurrency } from '../api.js'
-import { selectCategory, selectItem, searchItem, cancelItemHighlight } from '../helpers.js'
+import { selectCategory, selectItem } from '../helpers.js'
 
 export default function Home({
     userLoggedIn
 }) {
-    // next todo: enable scroll to searched item
-    // next todo: enable item dragging
     
     const [groceryData, setGroceryData] = useState(null)
     const [currency, setCurrency] = useState(null)
@@ -38,18 +35,6 @@ export default function Home({
                     data.map((data, index) => index === 0 ? { ...data, selected: true } : data))
             .then(data => setGroceryData(data))
     }, [changeDetected.internalText])
-
-    // useEffect(() => {
-    //     console.log('use effect fired')
-    //     function handleScroll(e) {
-    //         console.log('event listener fired', e)
-    //         this.scrollTop
-    //     }
-    //     const itemsEl = document.querySelectorAll('.item')
-    //     itemsEl.forEach(itemEl => itemEl.addEventListener('transitionrun', handleScroll))
-    //     return itemsEl.forEach(itemEl => itemEl.removeEventListener('transitionrun', handleScroll))
-    // }
-    // , [groceryData?.find(category => category.selected)?.items])
 
     async function updateItemCount(id, count, addOrSubtract) {
         const newCount = (addOrSubtract === 'add') ? await addItemCount(id, count) : await subtractItemCount(id, count)
@@ -164,12 +149,6 @@ export default function Home({
                                 updateUserCurrency(res)
                                     .then(currency => setCurrency(currency))}
                         />
-                        <SearchItemForm submitResponse={name =>{
-                            setGroceryData(prevData => searchItem(prevData, name));
-                            setTimeout(() => {
-                                setGroceryData(prevData => cancelItemHighlight(prevData))
-                            }, 5000)
-                        }} />
                         <button
                             className='button--add'
                             onClick={event => handleUserEvent(event, 'add', 'item')}

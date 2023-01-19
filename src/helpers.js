@@ -24,37 +24,6 @@ export function selectItem(data, selectedId) {
     })
 }
 
-export function searchItem(data, name) {
-    const currentCategory = data.find(category => category.selected)
-    const itemId = currentCategory.items.find(item => item.name.toUpperCase() === name.toUpperCase())?.id
-    if (itemId) {
-        return data.map(category => {
-            if (category.id === currentCategory.id) {
-                return {
-                    ...category, 
-                    items: category.items.map(item =>{
-                        if (item.highlighted) {
-                            return {...item, highlighted: false}
-                        } else {
-                            return (item.id === itemId) ? {...item, highlighted: true} : item
-                        }
-                    })
-                }
-            } else return category
-        }
-        )
-    }
-}
-
-export function cancelItemHighlight(data) {
-    return data.map(category =>
-        ({
-            ...category,
-            items: category.items.map(item => ({ ...item, highlighted: false }))
-        })
-    )
-}
-
 export function calculateTotal(data) {
     return data?.reduce((prevVal, currCat) => {
         return prevVal + currCat.items.reduce((prevVal, currItem) => {
