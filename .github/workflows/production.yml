@@ -21,7 +21,8 @@ jobs:
     - name: Build file
       run: npm run build
     
-    # // deploy the application to netlify
+    # deploy the application to netlify
+    # test 1
     - name: Deploy production to Netlify
       uses: South-Paw/action-netlify-deploy@v1.2.0
       with:
