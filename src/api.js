@@ -1,11 +1,14 @@
 import { supabase } from './supabaseClient'
+import Cookies from 'js-cookie'
 
-async function getUserId() {
+export async function getUserId() {
     const { data } = await supabase.from('profiles').select('id')
-    return data[0]?.id
+    if (data) {
+        return data[0]?.id
+    } else return Cookies.get('user_id')
 }
 
-let user_id 
+let user_id
 
 getUserId()
     ?.then(id => user_id = id)
@@ -107,7 +110,6 @@ export async function subtractItemCount(id, initialCount) {
     } else return 0
 }
 
-// todo: order items by 'created_at'
 export async function generateList() {
     const { data, error } = await supabase
         .from('categories')
@@ -123,7 +125,7 @@ export async function generateList() {
             )
         `)
         .order('count', { foreignTable: 'items', ascending: false })
-        .order('created_at')
+        .order('updated_at')
     if (error) {
         console.error(error)
     } else {
@@ -138,7 +140,7 @@ export async function getUserCurrency() {
     if (error) {
         console.error(error)
     } else {
-        return data[0].currency
+        return data[0]?.currency
     }
 }
 

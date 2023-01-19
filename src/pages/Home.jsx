@@ -71,13 +71,13 @@ export default function Home({
         ?.filter(element => element.selected)[0]
         ?.items
         ?.map(item =>
-            <Item
-                item={item}
-                key={item.id}
-                currency={currency}
-                handleClick={handleUserEvent}
-                updateItemCount={updateItemCount}
-            />
+                <Item
+                    item={item}
+                    key={item.id}
+                    currency={currency}
+                    handleClick={handleUserEvent}
+                    updateItemCount={updateItemCount}
+                />
         )
         
     const [userEvent, setUserEvent] = useState({ mode: '', target: '', id: '' })
