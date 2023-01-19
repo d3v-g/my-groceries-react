@@ -35,5 +35,5 @@ Which versions to run on:
   - User authentication (email, magic link, etc) and authorisation (via Row Level Security)
   - Relational DB Schemas
 - Netlify (production web server)
-- Renovate as the dependency update manager
+<!-- - Renovate as the dependency update manager -->
 - Github actions (CI/CD Pipeline) and CircleCI
