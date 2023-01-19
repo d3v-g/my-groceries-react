@@ -30,9 +30,9 @@ export default function Home({
     useEffect(() => {
         const currentCategoryId = groceryData?.find(data => data.selected)?.id
         generateList()
-            .then(data =>
+            ?.then(data =>
                 currentCategoryId
-                ?
+                    ?
                     data.map(data => data.id === currentCategoryId ? { ...data, selected: true } : data)
                     :
                     data.map((data, index) => index === 0 ? { ...data, selected: true } : data))
