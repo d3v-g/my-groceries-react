@@ -8,7 +8,7 @@ export default function SignUpForm( {onSubmit} ) {
                 Enter your email:
             </label>
             <input 
-                className='form--input' 
+                className='auth--input' 
                 type='email'
                 {...register('email', { required: true })}
             />
@@ -16,19 +16,19 @@ export default function SignUpForm( {onSubmit} ) {
                 Enter your password:
             </label>
             <input 
-                className='form--input' 
-                type='password' 
+                className='auth--input'
+                type='password'
                 {...register('password', { required: true })}
             />
             <label className='form--question' htmlFor='passwordConf'>
                 Confirm your password:
             </label>
             <input 
-                className='form--input' 
+                className='auth--input' 
                 type='password' 
                 {...register('passwordConf', { required: true })}
             />
-            <button className='button--green' type='submit'>
+            <button className='button--green auth--button' type='submit'>
                 Sign up
             </button>
         </form>

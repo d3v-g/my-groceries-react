@@ -8,7 +8,7 @@ export default function LogInForm({ onSubmit }) {
                 Enter your email:
             </label>
             <input 
-                className='form--input' 
+                className='auth--input' 
                 type='email'
                 {...register('email', { required: true })}
             />
@@ -16,11 +16,11 @@ export default function LogInForm({ onSubmit }) {
                 Enter your password:
             </label>
             <input 
-                className='form--input' 
+                className='auth--input' 
                 type='password' 
                 {...register('password', { required: true })}
             />
-            <button className='button--green' type='submit'>
+            <button className='button--green auth--button' type='submit'>
                 log in
             </button>
         </form>

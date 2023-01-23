@@ -6,7 +6,9 @@ export default function Modal({
     return (
         <div
             className="modal"
-            onClick={() => onClose({canceled: true, data: null})}
+            onClick={(e) => {
+                console.log(e)
+                onClose({canceled: true, data: null})}}
         >
             <div className="modal--content" onClick={(event) => event.stopPropagation()}>
                 <div className="modal--header">
