@@ -57,7 +57,7 @@ export default function ItemForm({initialData, onClose, mode, parent_category_id
                 <input 
                     className='form--input'
                     type='number'
-                    step='0.01'
+                    step='0.5'
                     defaultValue={initialData?.price ?? 0}
                     {...register('price', { valueAsNumber: true, required: true })}
                 />

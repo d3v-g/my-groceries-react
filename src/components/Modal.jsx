@@ -7,7 +7,6 @@ export default function Modal({
         <div
             className="modal"
             onClick={(e) => {
-                console.log(e)
                 onClose({canceled: true, data: null})}}
         >
             <div className="modal--content" onClick={(event) => event.stopPropagation()}>
