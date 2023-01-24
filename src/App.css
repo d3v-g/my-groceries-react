@@ -44,11 +44,12 @@
 }
 
 .alertText {
-    background-color: #f9d8d8;
+    background-color: #e4e4e4;
     padding: 5px 0px 5px 5px;
-    font-family: 'Roboto';
+    font-family: 'Inter';
     border-radius: 2px;
     margin-bottom: 5px;
+    font-size: 14px;
 }
 
 .auth--form {
@@ -299,8 +300,12 @@
     font-family: 'Roboto';
     font-style: normal;
     font-weight: 400;
-    font-size: 10px;
-    line-height: 12px;
+    font-size: 12px;
+}
+
+.form--warning::before {
+    content: url('./assets/warning.png');
+    margin: 10px;
 }
 
 .item {
