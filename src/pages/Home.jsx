@@ -8,8 +8,9 @@ import DeleteForm from '../forms/DeleteForm'
 import CurrencyForm from '../forms/CurrencyForm'
 import { useState, useEffect } from 'react'
 import { Navigate } from 'react-router-dom'
+import toast, { Toaster } from 'react-hot-toast'
 import { addItemCount, subtractItemCount, generateList, getUserCurrency, updateUserCurrency } from '../api.js'
-import { selectCategory, selectItem } from '../helpers.js'
+import { selectCategory, selectItem, toastStyle } from '../helpers.js'
 
 export default function Home({
     userLoggedIn
@@ -17,7 +18,7 @@ export default function Home({
     
     const [groceryData, setGroceryData] = useState(null)
     const [currency, setCurrency] = useState(null)
-    const [changeDetected, setChangeDetected] = useState({alertText: '', internalText: ''})
+    const [changeDetected, setChangeDetected] = useState(true)
 
     useEffect(() => {
         getUserCurrency()
@@ -34,12 +35,12 @@ export default function Home({
                     :
                     data.map((data, index) => index === 0 ? { ...data, selected: true } : data))
             .then(data => setGroceryData(data))
-    }, [changeDetected.internalText])
+    }, [changeDetected])
 
     async function updateItemCount(id, count, addOrSubtract) {
         const newCount = (addOrSubtract === 'add') ? await addItemCount(id, count) : await subtractItemCount(id, count)
         if (newCount != null) {
-            setChangeDetected(prevState => ({...prevState, internalText: `user updated count of ${id} to ${newCount}`}))
+            setChangeDetected(prevState => !prevState)
         }
     }
         
@@ -74,20 +75,15 @@ export default function Home({
         setUserEvent({ mode, target, id })
     }
     
-    const onModalClose = (response) => {
+    const onModalClose = (res) => {
         setShowModal(false)
-        if (response.canceled) {
-            setChangeDetected(prevState => ({...prevState, alertText: 'Change cancelled'}))
+        if (res.canceled) {
+            toast.error('Change cancelled', toastStyle)
         } else {
             const action = `${userEvent.mode}${userEvent.mode != 'delete' ? 'ed' : 'd'}`
-            setChangeDetected({
-                alertText: `You have successfully ${action}: ${response.data.name}`,
-                internalText: `User ${action} grocery data to: ${response.data.id}, ${response.data.name}, ${response.data.price}, ${response.data.note}`
-            })
+            setChangeDetected(prevState => !prevState)
+            toast.success(`You have successfully ${action}: ${res.data.name}`, toastStyle)
         }
-        setTimeout(() => {
-            setChangeDetected(prevState =>  ({...prevState, alertText: ''}))
-        }, 5000)
     }
 
     if (!userLoggedIn) {
@@ -95,7 +91,7 @@ export default function Home({
     } else {
         return (
             <div className="container">
-                {changeDetected.alertText && <p className='alertText' role='alert'>{changeDetected.alertText}</p>}
+                <Toaster />
                 {showModal &&
                     <Modal onClose={onModalClose} title={`${userEvent.mode} a${userEvent.target === 'item' ? 'n' : ''} ${userEvent.target}`}>
                         {userEvent.mode === 'delete'

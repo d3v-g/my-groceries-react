@@ -16,8 +16,8 @@ getUserId()
 export async function handleLogIn(email, password) {
     const { user, error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) {
-        return error?.error_description || error?.message
-    }
+        return {success: false, message: error?.error_description || error?.message}
+    } else return {success: true, message: 'log in successful'}
 }
 
 export async function handleRegister(email, password, passwordConf) {
@@ -27,11 +27,11 @@ export async function handleRegister(email, password, passwordConf) {
             password,
             options: {data: {'email': email} }})
         if (error) {
-            return error?.error_description || error?.message
-        } else return 'Please check your email for a verification link.'
+            return {success: false, message: error?.error_description || error?.message}
+        } else return {success: true, message: 'Please check your email for a verification link.'}
     }
     else if (passwordConf && password)
-        return 'Passwords do not match.'
+        return {success: false, message: 'Passwords do not match.'}
 }
 
 export async function addCategory(name) {

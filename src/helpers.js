@@ -35,3 +35,7 @@ export function calculateTotal(data) {
 export function formatPrice(currency, num) {
     return (currency && num != null) ? `${currency} ${num?.toFixed(2)}` : ''
 }
+
+export const toastStyle = {
+    style: {fontFamily: 'Inter', fontSize: '14px'}
+}

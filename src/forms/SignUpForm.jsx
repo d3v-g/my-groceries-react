@@ -25,7 +25,7 @@ export default function SignUpForm( {onSubmit} ) {
             </label>
             <input 
                 className='auth--input' 
-                type='password' 
+                type='password'
                 {...register('passwordConf', { required: true })}
             />
             <button className='button--green auth--button' type='submit'>
