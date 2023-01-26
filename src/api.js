@@ -124,8 +124,8 @@ export async function generateList() {
                 price
             )
         `)
-        .order('count', { foreignTable: 'items', ascending: false })
-        .order('updated_at')
+        .order('name', { foreignTable: 'items' })
+        .order('name')
     if (error) {
         console.error(error)
     } else {
