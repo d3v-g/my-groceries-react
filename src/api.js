@@ -1,17 +1,14 @@
 import { supabase } from './supabaseClient'
 import Cookies from 'js-cookie'
 
+let user_id
+
 export async function getUserId() {
     const { data } = await supabase.from('profiles').select('id')
     if (data) {
         return data[0]?.id
     } else return Cookies.get('user_id')
 }
-
-let user_id
-
-getUserId()
-    ?.then(id => user_id = id)
 
 export async function handleLogIn(email, password) {
     const { user, error } = await supabase.auth.signInWithPassword({ email, password })
@@ -35,6 +32,7 @@ export async function handleRegister(email, password, passwordConf) {
 }
 
 export async function addCategory(name) {
+    user_id = user_id ? user_id : await getUserId()
     const { data, error } = await supabase
         .from('categories')
         .insert({ name, user_id })
@@ -56,6 +54,7 @@ export async function updateCategory(name, id) {
 }
 
 export async function addItem(name, price, note, parent_category_id) {
+    user_id = user_id ? user_id : await getUserId()
     const { data, error } = await supabase
         .from('items')
         .insert({ name, price, note, count: 1, user_id, parent_category_id })
@@ -145,6 +144,7 @@ export async function getUserCurrency() {
 }
 
 export async function updateUserCurrency(currency) {
+    user_id = user_id ? user_id : await getUserId()
     const { data, error } = await supabase
         .from('profiles')
         .update({currency: currency})

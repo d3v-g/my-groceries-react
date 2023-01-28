@@ -54,8 +54,6 @@ export default function CategoryForm({ initialData, onClose, mode }) {
                     <button className='button--green' type='submit'>Submit</button>
                     <button className='button--red' onClick={() => onClose({canceled: true, data: null})}>Cancel</button>
                 </div>
-                
-
             </form>
         </div>
     )
