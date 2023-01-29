@@ -8,16 +8,14 @@ import DeleteForm from '../forms/DeleteForm'
 import CurrencyForm from '../forms/CurrencyForm'
 import { useState, useEffect } from 'react'
 import { Navigate } from 'react-router-dom'
-import toast, { Toaster } from 'react-hot-toast'
 import { addItemCount, subtractItemCount, generateList, updateUserCurrency } from '../api.js'
-import { selectCategory, selectItem, toastStyle } from '../helpers.js'
+import { selectCategory, selectItem, notify } from '../helpers.js'
 
 export default function Home({
     user, changeCurrency
 }) {
     // todo:
     // move toast to app level
-    // pass user object into home instead, which will include user currency
     const [groceryData, setGroceryData] = useState(null)
     // todo: refactor to change the groceryData state instead
     const [changeDetected, setChangeDetected] = useState(false)
@@ -57,7 +55,7 @@ export default function Home({
                 <Item
                     item={item}
                     key={item.id}
-                    currency={user.currency}
+                    currency={user?.currency}
                     handleClick={handleUserEvent}
                     updateItemCount={updateItemCount}
                 />
@@ -67,19 +65,23 @@ export default function Home({
     const [showModal, setShowModal] = useState(false)
 
     function handleUserEvent(event, mode, target) {
-        setShowModal(true)
-        const id = event.currentTarget.id
-        setUserEvent({ mode, target, id })
+        if (!groceryData.filter(category => category.selected)[0] && mode + target === 'additem') {
+            notify({ success: false, message: 'Please select a category' })
+        } else {
+            setShowModal(true)
+            const id = event.currentTarget.id
+            setUserEvent({ mode, target, id })
+        }
     }
     
     const onModalClose = (res) => {
         setShowModal(false)
         if (res.canceled) {
-            toast.error('Change cancelled', toastStyle)
+            notify({ success: false, message: 'Change cancelled' })
         } else {
             const action = `${userEvent.mode}${userEvent.mode != 'delete' ? 'ed' : 'd'}`
             setChangeDetected(prevState => !prevState)
-            toast.success(`You have successfully ${action}: ${res.data.name}`, toastStyle)
+            notify({ success: true, message: `You have successfully ${action}: ${res.data.name}` })
         }
     }
 
@@ -88,7 +90,6 @@ export default function Home({
     } else {
         return (
             <div className="container">
-                <Toaster />
                 {showModal &&
                     <Modal onClose={onModalClose} title={`${userEvent.mode} a${userEvent.target === 'item' ? 'n' : ''} ${userEvent.target}`}>
                         {userEvent.mode === 'delete'
@@ -138,8 +139,9 @@ export default function Home({
                     </div>
                     <div className='items--side'>
                         <CurrencyForm 
-                            currency={user.currency} 
-                            submitResponse={res => updateUserCurrency(res)?.then(currency => changeCurrency(currency))}
+                            currency={user?.currency} 
+                            submitResponse={res => updateUserCurrency(res)
+                                ?.then(currency => changeCurrency(currency))}
                         />
                         <button
                             className='button--add'
@@ -150,7 +152,7 @@ export default function Home({
                 <hr className="break"></hr>
                 <ShoppingListContainer
                     groceryData={groceryData}
-                    currency={user.currency}
+                    currency={user?.currency}
                     controlStrikeThrough={event =>
                         setGroceryData(prevData =>
                             selectItem(prevData, event.target.id)

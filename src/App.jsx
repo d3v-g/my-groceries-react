@@ -3,6 +3,7 @@ import { BrowserRouter as Router,
           Route,
           Routes
 } from 'react-router-dom'
+import { Toaster } from 'react-hot-toast'
 import { supabase } from './supabaseClient'
 import { getUser } from './api.js'
 import './App.css'
@@ -39,6 +40,7 @@ function App() {
           <div className="App">
             <main>
               <Navbar userLoggedIn={user ? true : false} logOut={() => supabase.auth.signOut()}/>
+              <Toaster />
               <Routes>
                 <Route path='/login' element={<Auth userLoggedIn={user ? true : false} />} />
                 <Route path='/' element={<Home user={user} changeCurrency={(currency) => setUser(prevState => ({...prevState, currency}))}/>} />

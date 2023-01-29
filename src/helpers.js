@@ -1,3 +1,5 @@
+import toast from 'react-hot-toast'
+
 export function selectCategory(data, selectedId) {
     return data.map(data => {
         if (data.id === selectedId) {
@@ -38,4 +40,10 @@ export function formatPrice(currency, num) {
 
 export const toastStyle = {
     style: {fontFamily: 'Inter', fontSize: '14px'}
+}
+
+export function notify(res) {
+    if (res.success) {
+        toast.success(res.message, toastStyle)
+    } else toast.error(res.message, toastStyle)
 }
