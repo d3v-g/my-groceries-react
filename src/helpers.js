@@ -1,5 +1,9 @@
 import toast from 'react-hot-toast'
 
+export function findCurrentCategoryId(data) {
+    return data.find(category => category.selected).id
+}
+
 export function selectCategory(data, selectedId) {
     return data.map(data => {
         if (data.id === selectedId) {
@@ -24,6 +28,16 @@ export function selectItem(data, selectedId) {
             } else return item
         })}
     })
+}
+
+export function setItemCountInState(data, id, newCount) {
+    if (newCount != null) {
+        return data.map(category => {
+            if (category.selected) {
+                return {...category, items: category.items.map(item => item.id === id ? ({...item, count: newCount}) : item)}
+            } else return category
+        })
+    } else return data
 }
 
 export function calculateTotal(data) {

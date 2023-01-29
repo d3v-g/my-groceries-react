@@ -2,11 +2,22 @@ import deleteImage from '../assets/delete.png'
 import editImage from '../assets/edit.png'
 import subtractImage from '../assets/subtract.png'
 import addItemImage from '../assets/add-item.png'
+import { addItemCount, subtractItemCount } from '../api.js'
 import { formatPrice } from '../helpers'
 
 export default function Item({
     item, currency, handleClick, updateItemCount
 }) {
+
+    function handleClick(addOrSubtract) {
+        addOrSubtract === 'add'
+            ?
+            addItemCount(item.id, item.count)
+                .then(newCount => updateItemCount(newCount))
+            :
+            subtractItemCount(item.id, item.count)
+                .then(newCount => updateItemCount(newCount))
+    }
 
     return (
         <div className={`item ${item.highlighted ? 'item--active' : ''}`}>
@@ -31,11 +42,11 @@ export default function Item({
             <p className='item--price'>{formatPrice(currency, item.price)}</p>
             <p className='item--note'>note: {item.note ?? ''}</p>
             <div className='item--count'>
-                <button onClick={() => {updateItemCount(item.id, item.count, 'subtract')}}>
+                <button onClick={() => handleClick('subtract')}>
                     <img src={subtractImage} />
                 </button>
                 <p className='item--count'>{item.count}</p>
-                <button onClick={() => {updateItemCount(item.id, item.count, 'add')}}>
+                <button onClick={() => handleClick('add')}>
                     <img src={addItemImage} />
                 </button>
             </div>
