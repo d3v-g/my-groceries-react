@@ -41,7 +41,7 @@ function App() {
               <Navbar userLoggedIn={user ? true : false} logOut={() => supabase.auth.signOut()}/>
               <Routes>
                 <Route path='/login' element={<Auth userLoggedIn={user ? true : false} />} />
-                <Route path='/' element={<Home user={user} />} />
+                <Route path='/' element={<Home user={user} changeCurrency={(currency) => setUser(prevState => ({...prevState, currency}))}/>} />
               </Routes>
             </main>
           </div>

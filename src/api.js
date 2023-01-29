@@ -1,7 +1,5 @@
 import { supabase } from './supabaseClient'
 
-let user_id
-
 export async function getUser() {
     const { data } = await supabase.from('profiles').select()
     if (data) {
@@ -31,7 +29,7 @@ export async function handleRegister(email, password, passwordConf) {
 }
 
 export async function addCategory(name) {
-    user_id = user_id ? user_id : await getUserId()
+    const {id: user_id} = await getUser()
     const { data, error } = await supabase
         .from('categories')
         .insert({ name, user_id })
@@ -53,7 +51,7 @@ export async function updateCategory(name, id) {
 }
 
 export async function addItem(name, price, note, parent_category_id) {
-    user_id = user_id ? user_id : await getUserId()
+    const {id: user_id} = await getUser()
     const { data, error } = await supabase
         .from('items')
         .insert({ name, price, note, count: 1, user_id, parent_category_id })
@@ -143,7 +141,7 @@ export async function getUserCurrency() {
 }
 
 export async function updateUserCurrency(currency) {
-    user_id = user_id ? user_id : await getUserId()
+    const {id: user_id} = await getUser()
     const { data, error } = await supabase
         .from('profiles')
         .update({currency: currency})

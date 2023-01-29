@@ -9,24 +9,18 @@ import CurrencyForm from '../forms/CurrencyForm'
 import { useState, useEffect } from 'react'
 import { Navigate } from 'react-router-dom'
 import toast, { Toaster } from 'react-hot-toast'
-import { addItemCount, subtractItemCount, generateList, getUserCurrency, updateUserCurrency } from '../api.js'
+import { addItemCount, subtractItemCount, generateList, updateUserCurrency } from '../api.js'
 import { selectCategory, selectItem, toastStyle } from '../helpers.js'
 
 export default function Home({
-    user
+    user, changeCurrency
 }) {
     // todo:
     // move toast to app level
     // pass user object into home instead, which will include user currency
     const [groceryData, setGroceryData] = useState(null)
-    const [currency, setCurrency] = useState(null)
     // todo: refactor to change the groceryData state instead
     const [changeDetected, setChangeDetected] = useState(false)
-
-    useEffect(() => {
-        getUserCurrency()
-            .then(data => setCurrency(data))
-    }, [])
 
     useEffect(() => {
         const currentCategoryId = groceryData?.find(data => data.selected)?.id
@@ -38,7 +32,7 @@ export default function Home({
                     :
                     data.map((data, index) => index === 0 ? { ...data, selected: true } : data))
             .then(data => setGroceryData(data))
-    }, [changeDetected])
+    }, [changeDetected, user?.currency])
 
     async function updateItemCount(id, count, addOrSubtract) {
         const newCount = (addOrSubtract === 'add') ? await addItemCount(id, count) : await subtractItemCount(id, count)
@@ -63,7 +57,7 @@ export default function Home({
                 <Item
                     item={item}
                     key={item.id}
-                    currency={currency}
+                    currency={user.currency}
                     handleClick={handleUserEvent}
                     updateItemCount={updateItemCount}
                 />
@@ -134,6 +128,7 @@ export default function Home({
                         onClick={event => handleUserEvent(event, 'add', 'category')}
                     >Add category</button>
                 </div>
+
                 <hr className="break"></hr>
 
                 <div className='items--container'>
@@ -143,10 +138,8 @@ export default function Home({
                     </div>
                     <div className='items--side'>
                         <CurrencyForm 
-                            currency={currency} 
-                            submitResponse={res => 
-                                updateUserCurrency(res)
-                                    .then(currency => setCurrency(currency))}
+                            currency={user.currency} 
+                            submitResponse={res => updateUserCurrency(res)?.then(currency => changeCurrency(currency))}
                         />
                         <button
                             className='button--add'
@@ -157,7 +150,7 @@ export default function Home({
                 <hr className="break"></hr>
                 <ShoppingListContainer
                     groceryData={groceryData}
-                    currency={currency}
+                    currency={user.currency}
                     controlStrikeThrough={event =>
                         setGroceryData(prevData =>
                             selectItem(prevData, event.target.id)
