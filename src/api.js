@@ -1,13 +1,12 @@
 import { supabase } from './supabaseClient'
-import Cookies from 'js-cookie'
 
 let user_id
 
-export async function getUserId() {
-    const { data } = await supabase.from('profiles').select('id')
+export async function getUser() {
+    const { data } = await supabase.from('profiles').select()
     if (data) {
-        return data[0]?.id
-    } else return Cookies.get('user_id')
+        return data[0]
+    } else return null
 }
 
 export async function handleLogIn(email, password) {

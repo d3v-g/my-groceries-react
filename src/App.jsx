@@ -4,44 +4,44 @@ import { BrowserRouter as Router,
           Routes
 } from 'react-router-dom'
 import { supabase } from './supabaseClient'
-import Cookies from 'js-cookie'
-import { getUserId } from './api.js'
+import { getUser } from './api.js'
 import './App.css'
 import Navbar from './components/Navbar'
 import Home from './pages/Home'
 import Auth from './pages/Auth'
 
 function App() {
-  const [userId, setUserId] = useState(null)
+  const [user, setUser] = useState(null)
 
   useEffect(() => {
-    getUserId()
-      .then(id => setUserId(id))
+    if (!user) {
+      getUser()
+        ?.then(user => setUser(user))
+    }
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (event === 'SIGNED_OUT' || event === 'USER_DELETED') {
-          Cookies.remove('user_id')
-          setUserId(null)
+          setUser(null)
         } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-          Cookies.set('user_id', session.user.id)
-          setUserId(Cookies.get('user_id'))
+          getUser()
+            .then(user => setUser(user))
         }
       }
   )
       return () => {
         authListener?.unsubscribe
       }
-  }, [userId])
+  }, [user])
 
   return (
         <Router>
           <div className="App">
             <main>
-              <Navbar userLoggedIn={userId ? true : false} logOut={() => supabase.auth.signOut()}/>
+              <Navbar userLoggedIn={user ? true : false} logOut={() => supabase.auth.signOut()}/>
               <Routes>
-                <Route path='/login' element={<Auth userLoggedIn={userId ? true : false} />} />
-                <Route path='/' element={<Home userLoggedIn={userId ? true : false} />} />
+                <Route path='/login' element={<Auth userLoggedIn={user ? true : false} />} />
+                <Route path='/' element={<Home user={user} />} />
               </Routes>
             </main>
           </div>

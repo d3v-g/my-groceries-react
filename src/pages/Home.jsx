@@ -13,12 +13,15 @@ import { addItemCount, subtractItemCount, generateList, getUserCurrency, updateU
 import { selectCategory, selectItem, toastStyle } from '../helpers.js'
 
 export default function Home({
-    userLoggedIn
+    user
 }) {
-    
+    // todo:
+    // move toast to app level
+    // pass user object into home instead, which will include user currency
     const [groceryData, setGroceryData] = useState(null)
     const [currency, setCurrency] = useState(null)
-    const [changeDetected, setChangeDetected] = useState(true)
+    // todo: refactor to change the groceryData state instead
+    const [changeDetected, setChangeDetected] = useState(false)
 
     useEffect(() => {
         getUserCurrency()
@@ -86,7 +89,7 @@ export default function Home({
         }
     }
 
-    if (!userLoggedIn) {
+    if (!user) {
         return <Navigate replace to='/login' />
     } else {
         return (
