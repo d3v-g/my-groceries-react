@@ -5,7 +5,7 @@ https://youtu.be/mn088Sh1fNE
 
 ## About this project/Description
 
-This project forms part of my CS50 final project. Written in React, this web app allows users to create an acount and manage their groceries based on specific categories. With this project, I am aiming to create an easy to use application with robust functionalities, which will make budgeting, planning groceries a much more pleasant experience.
+This project forms part of my CS50 final project. Written in React, this web app allows users to create an account and manage their groceries based on specific categories. With this project, I am aiming to create an easy to use application with robust functionality, which will make budgeting, planning groceries a much more pleasant experience.
 
 ## How to run
 ### Prerequisites 
