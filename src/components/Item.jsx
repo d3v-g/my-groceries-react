@@ -6,10 +6,10 @@ import { addItemCount, subtractItemCount } from '../api.js'
 import { formatPrice } from '../helpers'
 
 export default function Item({
-    item, currency, handleClick, updateItemCount
+    item, currency, handleEventClick, updateItemCount
 }) {
 
-    function handleClick(addOrSubtract) {
+    function handleCountClick(addOrSubtract) {
         addOrSubtract === 'add'
             ?
             addItemCount(item.id, item.count)
@@ -27,13 +27,13 @@ export default function Item({
                     <button
                         className='edit--button'
                         id={item.id}
-                        onClick={event => {handleClick(event, 'edit', 'item')}}>
+                        onClick={event => handleEventClick(event, 'edit', 'item')}>
                         <img src={editImage} />
                     </button >
                     <button
                         className='delete--button'
                         id={item.id}
-                        onClick={event => handleClick(event, 'delete', 'item')} 
+                        onClick={event => handleEventClick(event, 'delete', 'item')} 
                     >
                         <img src={deleteImage} />
                     </button> 
@@ -42,11 +42,11 @@ export default function Item({
             <p className='item--price'>{formatPrice(currency, item.price)}</p>
             <p className='item--note'>note: {item.note ?? ''}</p>
             <div className='item--count'>
-                <button onClick={() => handleClick('subtract')}>
+                <button onClick={() => handleCountClick('subtract')}>
                     <img src={subtractImage} />
                 </button>
                 <p className='item--count'>{item.count}</p>
-                <button onClick={() => handleClick('add')}>
+                <button onClick={() => handleCountClick('add')}>
                     <img src={addItemImage} />
                 </button>
             </div>

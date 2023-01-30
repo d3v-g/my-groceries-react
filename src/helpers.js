@@ -39,6 +39,9 @@ export function setItemCountInState(data, id, newCount) {
         })
     } else return data
 }
+export function setGroceryDataInState(prevGroceryData, newData) {
+    return prevGroceryData.map(category => category)
+}
 
 export function calculateTotal(data) {
     return data?.reduce((prevVal, currCat) => {

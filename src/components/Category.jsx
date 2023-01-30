@@ -2,7 +2,7 @@ import deleteImage from '../assets/delete.png'
 import editImage from '../assets/edit.png'
 
 export default function Category({ 
-    category, handleSelect, handleClick
+    category, handleSelect, handleEventClick
 }) {
 
     return (
@@ -12,11 +12,11 @@ export default function Category({
             onClick={handleSelect}
         >
             {category.name}
-            <button className='edit--button' id={category.id} onClick={event => handleClick(event, 'edit', 'category')}>
+            <button className='edit--button' id={category.id} onClick={event => handleEventClick(event, 'edit', 'category')}>
                 <img src={editImage} />
             </button>
             
-            <button className="delete--button" id={category.id} onClick={event => handleClick(event, 'delete', 'category')}>
+            <button className="delete--button" id={category.id} onClick={event => handleEventClick(event, 'delete', 'category')}>
                 <img src={deleteImage} />
             </button>
         </div>
