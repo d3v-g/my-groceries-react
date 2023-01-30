@@ -74,8 +74,8 @@ export default function ItemForm({initialData, onClose, mode, parent_category_id
                     defaultValue={initialData?.note}
                     {...register('note', { maxLength: 40 })}
                 />
-                {errors.itemNote?.type === 'maxLength' && <p role='alert'>Maximum note length is 40 characters</p>}
-                
+                {errors.note?.type === 'maxLength' && <p role='alert'>Maximum note length is 40 characters</p>}
+
                 <div className='form--buttons'>
                     <button className='button--green' type='submit'>Submit</button>
                     <button className='button--red' onClick={() => onClose({canceled: true, data: null})}>Cancel</button>

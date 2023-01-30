@@ -1,5 +1,19 @@
 import toast from 'react-hot-toast'
 
+function orderGroceryData(data) {
+    //todo: order grocery data by name in alphabetical order
+    function compare(a, b) {
+        if (a.name < b.name) {
+            return -1
+        }
+        if (a.name > b.name) {
+            return 1
+        }
+        return 0
+    }
+    return data.map(category => ({...category, items: category.items.sort(compare)})).sort(compare)
+}
+
 export function findCurrentCategoryId(data) {
     return data.find(category => category.selected).id
 }
@@ -39,8 +53,44 @@ export function setItemCountInState(data, id, newCount) {
         })
     } else return data
 }
-export function setGroceryDataInState(prevGroceryData, newData) {
-    return prevGroceryData.map(category => category)
+
+export function setGroceryDataInState(prevGroceryData, resData, mode) {
+    let newData
+    if (mode === 'delete') {
+        newData = prevGroceryData.reduce((accVal, currVal) => {
+            if (currVal.id != resData.id) {
+                return [...accVal,
+                    {
+                        ...currVal,
+                        items: currVal.items.reduce((a, c) => {
+                            return c.id != resData.id ? a.concat(c) : a
+                        }, [])
+                    }
+                ]
+            } else {
+                return accVal
+            }
+        }, [])
+    } 
+    else if (mode === 'add') {
+        newData = 
+            resData.parent_category_id
+            ? prevGroceryData.map(category => 
+                category.id === resData.parent_category_id ? ({...category, items: category.items.concat(resData)}) : category)
+            : prevGroceryData.concat(resData)
+    }
+    else {
+        newData = 
+            resData.parent_category_id
+            ? prevGroceryData.map(category => 
+                category.id === resData.parent_category_id 
+                    ? ({...category, items: category.items.map(item => item.id === resData.id ? resData : item)})
+                    : category)
+            : prevGroceryData.map(category => category.id === resData.id ? resData : category)
+    }
+
+    const returnData = orderGroceryData(newData)
+    return returnData
 }
 
 export function calculateTotal(data) {

@@ -33,7 +33,17 @@ export async function addCategory(name) {
     const { data, error } = await supabase
         .from('categories')
         .insert({ name, user_id })
-        .select()
+        .select(`
+            name,
+            id,
+            items (
+                id,
+                name,
+                note,
+                count,
+                price
+            )
+        `)
     if (error) {
         console.error(error)
     } else return data[0]
@@ -44,7 +54,18 @@ export async function updateCategory(name, id) {
         .from('categories')
         .update({ name })
         .eq('id', id)
-        .select()
+        .select(`
+            name,
+            id,
+            items (
+                id,
+                name,
+                note,
+                count,
+                price,
+                parent_category_id
+            )
+        `)
     if (error) {
         console.error(error)
     } else return data[0]
@@ -54,8 +75,8 @@ export async function addItem(name, price, note, parent_category_id) {
     const {id: user_id} = await getUser()
     const { data, error } = await supabase
         .from('items')
-        .insert({ name, price, note, count: 1, user_id, parent_category_id })
-        .select()
+        .insert({ name, price, note, user_id, parent_category_id })
+        .select('id, name, note, count, price, parent_category_id')
     if (error) {
         console.error(error)
     } else return data[0]
@@ -66,7 +87,7 @@ export async function updateItem(name, price, note, id) {
         .from('items')
         .update({ name, price, note })
         .eq('id', id)
-        .select()
+        .select('id, name, note, count, price, parent_category_id')
     if (error) {
         console.error(error)
     } else return data[0]
@@ -87,10 +108,10 @@ export async function addItemCount(id, initialCount) {
             .from('items')
             .update({ count: initialCount + 1 })
             .eq('id', id)
-            .select()
+            .select('id, name, note, count, price, parent_category_id')
         if (error) {
             console.error(error)
-        } else return data[0].count
+        } else return data[0]
 }
 
 export async function subtractItemCount(id, initialCount) {
@@ -99,10 +120,10 @@ export async function subtractItemCount(id, initialCount) {
             .from('items')
             .update({ count: initialCount - 1 })
             .eq('id', id)
-            .select()
+            .select('id, name, note, count, price, parent_category_id')
         if (error) {
             console.error(error)
-        } else return data[0].count
+        } else return data[0]
     } else return 0
 }
 
@@ -117,7 +138,8 @@ export async function generateList() {
                 name,
                 note,
                 count,
-                price
+                price,
+                parent_category_id
             )
         `)
         .order('name', { foreignTable: 'items' })
@@ -126,17 +148,6 @@ export async function generateList() {
         console.error(error)
     } else {
         return data
-    }
-}
-
-export async function getUserCurrency() {
-    const { data, error } = await supabase
-        .from('profiles')
-        .select('currency')
-    if (error) {
-        console.error(error)
-    } else {
-        return data[0]?.currency
     }
 }
 

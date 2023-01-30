@@ -14,22 +14,14 @@ import { selectCategory, selectItem, notify, setItemCountInState, setGroceryData
 export default function Home({
     user, changeCurrency
 }) {
-    // todo:
     const [groceryData, setGroceryData] = useState(null)
-    // todo: refactor to change the groceryData state instead
-    const [changeDetected, setChangeDetected] = useState(false)
 
     useEffect(() => {
-        const currentCategoryId = groceryData?.find(data => data.selected)?.id
         generateList()
             ?.then(data =>
-                currentCategoryId
-                    ?
-                    data.map(data => data.id === currentCategoryId ? { ...data, selected: true } : data)
-                    :
                     data.map((data, index) => index === 0 ? { ...data, selected: true } : data))
             .then(data => setGroceryData(data))
-    }, [changeDetected])
+    }, [])
         
     const categoryElements = groceryData?.map(category =>
         <Category
@@ -49,7 +41,7 @@ export default function Home({
                     key={item.id}
                     currency={user?.currency}
                     handleEventClick={handleUserEvent}
-                    updateItemCount={newCount => setGroceryData(prevData => setItemCountInState(prevData, item.id, newCount))}
+                    updateItemCount={res => setGroceryData(prevData => setGroceryDataInState(prevData, res, 'edit'))}
                 />
         )
         
@@ -65,19 +57,14 @@ export default function Home({
             setUserEvent({ mode, target, id })
         }
     }
-
-
     
     const onModalClose = (res) => {
         setShowModal(false)
-        // console.log(res.data)
         if (res.canceled) {
             notify({ success: false, message: 'Change cancelled' })
         } else {
             const action = `${userEvent.mode}${userEvent.mode != 'delete' ? 'ed' : 'd'}`
-            // todo: make a helper function to update groceryData instead
-            // setGroceryData(prevData => setGroceryDataInState(prevData, res.data))
-            setChangeDetected(prevState => !prevState)
+            setGroceryData(prevData => setGroceryDataInState(prevData, res.data, userEvent.mode))
             notify({ success: true, message: `You have successfully ${action}: ${res.data.name}` })
         }
     }
