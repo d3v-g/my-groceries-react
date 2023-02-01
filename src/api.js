@@ -21,6 +21,7 @@ export async function handleRegister(email, password, passwordConf) {
             password,
             options: {data: {'email': email} }})
         if (error) {
+            console.log(error)
             return {success: false, message: error?.error_description || error?.message}
         } else return {success: true, message: 'Please check your email for a verification link.'}
     }

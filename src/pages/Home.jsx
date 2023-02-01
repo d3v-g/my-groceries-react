@@ -44,45 +44,45 @@ export default function Home({
 
     if (!user) {
         return <Navigate replace to='/login' />
-    } else {
-        return (
-            <div className="container">
-
-                <Modal
-                    showModal={showModal}
-                    onClose={onModalClose}
-                    userEvent={userEvent}
-                    title={`${userEvent?.mode} a${userEvent?.target === 'item' ? 'n' : ''} ${userEvent?.target}`}
-                />
-
-                <CategoriesContainer 
-                    groceryData={groceryData} 
-                    handleUserEvent={handleUserEvent}
-                    handleSelect={(id) => setGroceryData(prevData => selectCategory(prevData, id))}
-                />
-
-                <hr className="break"></hr>
-
-                <ItemsContainer 
-                    groceryData={groceryData}
-                    currency={user.currency}
-                    changeCurrency={changeCurrency}
-                    updateItemCount={res => setGroceryData(prevData => setGroceryDataInState(prevData, res, 'edit'))}
-                    handleUserEvent={handleUserEvent}
-                />
-
-                <hr className="break"></hr>
-
-                <ShoppingListContainer
-                    groceryData={groceryData}
-                    currency={user.currency}
-                    controlStrikeThrough={event =>
-                        setGroceryData(prevData =>
-                            selectItem(prevData, event.target.id)
-                        )
-                    }
-                />
-            </div>
-        )
     }
+
+    return (
+        <div className="container">
+
+            <Modal
+                showModal={showModal}
+                onClose={onModalClose}
+                userEvent={userEvent}
+                title={`${userEvent?.mode} a${userEvent?.target === 'item' ? 'n' : ''} ${userEvent?.target}`}
+            />
+
+            <CategoriesContainer 
+                groceryData={groceryData} 
+                handleUserEvent={handleUserEvent}
+                handleSelect={(id) => setGroceryData(prevData => selectCategory(prevData, id))}
+            />
+
+            <hr className="break"></hr>
+
+            <ItemsContainer 
+                groceryData={groceryData}
+                currency={user.currency}
+                changeCurrency={changeCurrency}
+                updateItemCount={res => setGroceryData(prevData => setGroceryDataInState(prevData, res, 'edit'))}
+                handleUserEvent={handleUserEvent}
+            />
+
+            <hr className="break"></hr>
+
+            <ShoppingListContainer
+                groceryData={groceryData}
+                currency={user.currency}
+                controlStrikeThrough={event =>
+                    setGroceryData(prevData =>
+                        selectItem(prevData, event.target.id)
+                    )
+                }
+            />
+        </div>
+    )
 }
