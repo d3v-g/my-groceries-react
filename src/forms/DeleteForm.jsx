@@ -1,15 +1,15 @@
 import { useEffect } from 'react'
 import { handleDelete } from '../api'
 
-export default function DeleteForm({ initialData, onClose, target }) {
+export default function DeleteForm({ initialData, onSubmit, target }) {
 
     function handleKeyDown(event) {
         if (event.code === 'Enter' || event.code === 'NumpadEnter') {
             handleDelete(target, initialData.id)
-                .then(() => onClose({canceled: false, data: initialData}))
+                .then(() => onSubmit({canceled: false, data: initialData}))
         }
         else if (event.code === 'Escape') {
-            onClose({canceled: true, data: null})
+            onSubmit({canceled: true, data: null})
         }
     }
 
@@ -29,10 +29,10 @@ export default function DeleteForm({ initialData, onClose, target }) {
                 <button className='button--red' 
                     onClick={() =>
                         handleDelete(target, initialData.id)
-                            .then(() => onClose({canceled: false, data: initialData}))
+                            .then(() => onSubmit({canceled: false, data: initialData}))
                     }
                 >Yes, delete</button>
-                <button className='button--green'onClick={() => onClose({canceled: true, data: null})}>No, do not delete</button>
+                <button className='button--green'onClick={() => onSubmit({canceled: true, data: null})}>No, do not delete</button>
             </div>
         </div>
     )

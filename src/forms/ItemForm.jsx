@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form'
 import { useEffect } from 'react'
 import { addItem, updateItem } from '../api'
 
-export default function ItemForm({initialData, onClose, mode, parent_category_id}) {
+export default function ItemForm({initialData, onClose, mode}) {
 
     const { register, handleSubmit, formState: { errors } } = useForm()
 
@@ -12,7 +12,7 @@ export default function ItemForm({initialData, onClose, mode, parent_category_id
         const price = formData.price
         mode === 'add'
             ?
-            addItem(name, price, note, parent_category_id)
+            addItem(name, price, note, initialData.parent_category_id)
                 .then(data => onClose({canceled: false, data}))
             :
             updateItem(name, price, note, initialData.id)

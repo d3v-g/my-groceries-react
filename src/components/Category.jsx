@@ -9,7 +9,7 @@ export default function Category({
         <div
             className={`category ${category.selected && 'category--current'}`}
             id={category.id}
-            onClick={handleSelect}
+            onClick={() => handleSelect(category.id)}
         >
             {category.name}
             <button className='edit--button' id={category.id} onClick={event => handleEventClick(event, 'edit', 'category')}>

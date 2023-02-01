@@ -1,20 +1,18 @@
-import Category from '../components/Category'
 import Modal from '../components/Modal'
-import Item from '../components/Item'
+import CategoriesContainer from '../components/CategoriesContainer'
+import ItemsContainer from '../components/ItemsContainer'
 import ShoppingListContainer from '../components/ShoppingListContainer'
-import CategoryForm from '../forms/CategoryForm'
-import ItemForm from '../forms/ItemForm'
-import DeleteForm from '../forms/DeleteForm'
-import CurrencyForm from '../forms/CurrencyForm'
 import { useState, useEffect } from 'react'
 import { Navigate } from 'react-router-dom'
-import { generateList, updateUserCurrency } from '../api.js'
-import { selectCategory, selectItem, notify, setItemCountInState, setGroceryDataInState } from '../helpers.js'
+import { generateList } from '../api.js'
+import { selectCategory, selectItem, notify, setUserEventInState, setGroceryDataInState } from '../helpers.js'
 
 export default function Home({
     user, changeCurrency
 }) {
     const [groceryData, setGroceryData] = useState(null)
+    const [userEvent, setUserEvent] = useState(null)
+    const [showModal, setShowModal] = useState(false)
 
     useEffect(() => {
         generateList()
@@ -22,31 +20,6 @@ export default function Home({
                     data.map((data, index) => index === 0 ? { ...data, selected: true } : data))
             .then(data => setGroceryData(data))
     }, [])
-        
-    const categoryElements = groceryData?.map(category =>
-        <Category
-            category={category}
-            key={category.id}
-            handleSelect={() => setGroceryData(prevData => selectCategory(prevData, category.id))}
-            handleEventClick={handleUserEvent}
-        />
-    )
-
-    const itemElements = groceryData
-        ?.filter(element => element.selected)[0]
-        ?.items
-        ?.map(item =>
-                <Item
-                    item={item}
-                    key={item.id}
-                    currency={user?.currency}
-                    handleEventClick={handleUserEvent}
-                    updateItemCount={res => setGroceryData(prevData => setGroceryDataInState(prevData, res, 'edit'))}
-                />
-        )
-        
-    const [userEvent, setUserEvent] = useState({ mode: '', target: '', id: '' })
-    const [showModal, setShowModal] = useState(false)
 
     function handleUserEvent(event, mode, target) {
         if (!groceryData.filter(category => category.selected)[0] && mode + target === 'additem') {
@@ -54,7 +27,7 @@ export default function Home({
         } else {
             setShowModal(true)
             const id = event.currentTarget.id
-            setUserEvent({ mode, target, id })
+            setUserEvent(setUserEventInState(mode, target, id, groceryData))
         }
     }
     
@@ -74,69 +47,35 @@ export default function Home({
     } else {
         return (
             <div className="container">
-                {showModal &&
-                    <Modal onClose={onModalClose} title={`${userEvent.mode} a${userEvent.target === 'item' ? 'n' : ''} ${userEvent.target}`}>
-                        {userEvent.mode === 'delete'
-                            ?
-                            <DeleteForm
-                                initialData={
-                                    userEvent.target === 'category' 
-                                        ? groceryData.find(c => c.id === userEvent.id) 
-                                        : groceryData.filter(c => c.selected)[0].items.find(i => i.id === userEvent.id)
-                                }
-                                onClose={onModalClose} target={userEvent.target}
-                            />
-                            :
-                            (userEvent.target === 'category'
-                                ?
-                                <CategoryForm
-                                    initialData={groceryData.find(c => c.id === userEvent.id)}
-                                    onClose={onModalClose}
-                                    mode={userEvent.mode}
-                                />
-                                :
-                                <ItemForm
-                                    initialData={groceryData.filter(c => c.selected)[0]?.items.find(i => i.id === userEvent.id)}
-                                    onClose={onModalClose}
-                                    mode={userEvent.mode}
-                                    parent_category_id={groceryData.find(data => data.selected)?.id}
-                                />
-                            )
-                        }
-                    </Modal>
-                }
-                <div className='categories--container'>
-                    <h2 className='title'>Categories</h2>
-                    <div className='categories'>{categoryElements}</div>
-                    <button
-                        className='button--add'
-                        onClick={event => handleUserEvent(event, 'add', 'category')}
-                    >Add category</button>
-                </div>
+
+                <Modal
+                    showModal={showModal}
+                    onClose={onModalClose}
+                    userEvent={userEvent}
+                    title={`${userEvent?.mode} a${userEvent?.target === 'item' ? 'n' : ''} ${userEvent?.target}`}
+                />
+
+                <CategoriesContainer 
+                    groceryData={groceryData} 
+                    handleUserEvent={handleUserEvent}
+                    handleSelect={(id) => setGroceryData(prevData => selectCategory(prevData, id))}
+                />
 
                 <hr className="break"></hr>
 
-                <div className='items--container'>
-                    <h2 className='title'>Items</h2>
-                    <div className='items'>
-                        {itemElements}
-                    </div>
-                    <div className='items--side'>
-                        <CurrencyForm 
-                            currency={user?.currency} 
-                            submitResponse={res => updateUserCurrency(res)
-                                ?.then(currency => changeCurrency(currency))}
-                        />
-                        <button
-                            className='button--add'
-                            onClick={event => handleUserEvent(event, 'add', 'item')}
-                        >Add item</button>
-                    </div>
-                </div>
+                <ItemsContainer 
+                    groceryData={groceryData}
+                    currency={user.currency}
+                    changeCurrency={changeCurrency}
+                    updateItemCount={res => setGroceryData(prevData => setGroceryDataInState(prevData, res, 'edit'))}
+                    handleUserEvent={handleUserEvent}
+                />
+
                 <hr className="break"></hr>
+
                 <ShoppingListContainer
                     groceryData={groceryData}
-                    currency={user?.currency}
+                    currency={user.currency}
                     controlStrikeThrough={event =>
                         setGroceryData(prevData =>
                             selectItem(prevData, event.target.id)

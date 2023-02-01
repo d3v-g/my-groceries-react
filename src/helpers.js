@@ -1,7 +1,6 @@
 import toast from 'react-hot-toast'
 
 function orderGroceryData(data) {
-    //todo: order grocery data by name in alphabetical order
     function compare(a, b) {
         if (a.name < b.name) {
             return -1
@@ -76,21 +75,32 @@ export function setGroceryDataInState(prevGroceryData, resData, mode) {
         newData = 
             resData.parent_category_id
             ? prevGroceryData.map(category => 
-                category.id === resData.parent_category_id ? ({...category, items: category.items.concat(resData)}) : category)
-            : prevGroceryData.concat(resData)
+                category.id === resData.parent_category_id ? ({...category, selected: true, items: category.items.concat(resData)}) : category)
+            : prevGroceryData.concat({...resData, selected: true})
     }
     else {
         newData = 
             resData.parent_category_id
-            ? prevGroceryData.map(category => 
-                category.id === resData.parent_category_id 
-                    ? ({...category, items: category.items.map(item => item.id === resData.id ? resData : item)})
-                    : category)
-            : prevGroceryData.map(category => category.id === resData.id ? resData : category)
+                ? prevGroceryData.map(category =>
+                    category.id === resData.parent_category_id
+                        ? ({ ...category, selected: true, items: category.items.map(item => item.id === resData.id ? resData : item) })
+                        : category
+                )
+                : prevGroceryData.map(category => category.id === resData.id ? {...resData, selected: true} : category)
     }
 
     const returnData = orderGroceryData(newData)
     return returnData
+}
+
+export function setUserEventInState(mode, target, id, groceryData) {
+    const initialData = target === 'category' 
+        ?
+            groceryData.find(c => c.id === id)
+        :
+            groceryData.filter(c => c.selected)[0]?.items.find(i => i.id === id) 
+                ?? {parent_category_id: groceryData.filter(c => c.selected)[0].id}
+    return {mode, target, initialData}
 }
 
 export function calculateTotal(data) {
@@ -105,11 +115,9 @@ export function formatPrice(currency, num) {
     return (currency && num != null) ? `${currency} ${num?.toFixed(2)}` : ''
 }
 
-export const toastStyle = {
-    style: {fontFamily: 'Inter', fontSize: '14px'}
-}
 
 export function notify(res) {
+    const toastStyle = {style: {fontFamily: 'Inter', fontSize: '14px'}}
     if (res.success) {
         toast.success(res.message, toastStyle)
     } else toast.error(res.message, toastStyle)
