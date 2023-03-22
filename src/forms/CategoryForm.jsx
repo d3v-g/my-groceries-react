@@ -45,6 +45,7 @@ export default function CategoryForm({ initialData, onClose, mode }) {
                     type='text'
                     placeholder='e.g. food'
                     defaultValue={initialData?.name}
+                    autoFocus={true}
                     {...register("name", { required: true, maxLength: 20 })} 
                 />
                 {errors.name?.type === 'required' && <p role="alert">Category name is required</p>}

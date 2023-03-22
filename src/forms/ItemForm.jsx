@@ -47,6 +47,7 @@ export default function ItemForm({initialData, onClose, mode}) {
                     type='text'
                     placeholder='e.g. apple'
                     defaultValue={initialData?.name}
+                    autoFocus={true}
                     {...register("name", { required: true, maxLength: 20 })} 
                 />
                 {errors.name?.type === 'required' && <p role="alert">Item name is required</p>}
