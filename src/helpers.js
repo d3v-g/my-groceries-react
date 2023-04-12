@@ -55,6 +55,14 @@ export function setItemCountInState(data, id, newCount) {
 
 export function setGroceryDataInState(prevGroceryData, resData, mode) {
     let newData
+    // switch (key) {
+    //     case value:
+            
+    //         break;
+    
+    //     default:
+    //         break;
+    // }
     if (mode === 'delete') {
         newData = prevGroceryData.reduce((accVal, currVal) => {
             if (currVal.id != resData.id) {
@@ -121,4 +129,8 @@ export function notify(res) {
     if (res.success) {
         toast.success(res.message, toastStyle)
     } else toast.error(res.message, toastStyle)
+}
+
+export function capitalise_first_letter(str) {
+ return str.charAt(0).toUpperCase() + str.slice(1)
 }

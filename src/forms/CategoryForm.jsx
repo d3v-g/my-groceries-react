@@ -1,13 +1,14 @@
 import { useForm } from "react-hook-form"
 import { useEffect } from 'react'
 import { addCategory, updateCategory } from "../api"
+import { capitalise_first_letter } from "../helpers"
 
 export default function CategoryForm({ initialData, onClose, mode }) {
     
     const { register, handleSubmit, formState: { errors } } = useForm()
 
     const onSubmit = async (formData) => {
-        const name = formData.name.trim()
+        const name = capitalise_first_letter(formData.name.trim())
         mode === 'add'
             ?
             addCategory(name)

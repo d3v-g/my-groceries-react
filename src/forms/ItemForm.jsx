@@ -1,13 +1,14 @@
 import { useForm } from 'react-hook-form'
 import { useEffect } from 'react'
 import { addItem, updateItem } from '../api'
+import { capitalise_first_letter } from "../helpers"
 
 export default function ItemForm({initialData, onClose, mode}) {
 
     const { register, handleSubmit, formState: { errors } } = useForm()
 
     const onSubmit = async (formData) => {
-        const name = formData.name.trim()
+        const name = capitalise_first_letter(formData.name.trim())
         const note = formData.note.trim()
         const price = formData.price
         mode === 'add'
@@ -60,10 +61,11 @@ export default function ItemForm({initialData, onClose, mode}) {
                     type='number'
                     step='0.5'
                     defaultValue={initialData?.price ?? 0}
-                    {...register('price', { valueAsNumber: true, required: true })}
+                    {...register('price', { valueAsNumber: true, required: true, min: 0 })}
                 />
                 {errors.price?.type === 'valueAsNumber' && <p role="alert">Item price must be a number</p>}
                 {errors.price?.type === 'required' && <p role="alert">Item price is required</p>}
+                {errors.price?.type === 'min' && <p role="alert">Item price must be more than 0</p>}
 
                 <label htmlFor='note' className='form--question'>
                     Add an optional note:
