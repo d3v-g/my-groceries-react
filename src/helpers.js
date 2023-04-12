@@ -55,39 +55,35 @@ export function setItemCountInState(data, id, newCount) {
 
 export function setGroceryDataInState(prevGroceryData, resData, mode) {
     let newData
-    // switch (key) {
-    //     case value:
-            
-    //         break;
-    
-    //     default:
-    //         break;
-    // }
-    if (mode === 'delete') {
-        newData = prevGroceryData.reduce((accVal, currVal) => {
-            if (currVal.id != resData.id) {
-                return [...accVal,
-                    {
-                        ...currVal,
-                        items: currVal.items.reduce((a, c) => {
-                            return c.id != resData.id ? a.concat(c) : a
-                        }, [])
-                    }
-                ]
-            } else {
-                return accVal
-            }
-        }, [])
-    } 
-    else if (mode === 'add') {
-        newData = 
-            resData.parent_category_id
-            ? prevGroceryData.map(category => 
-                category.id === resData.parent_category_id ? ({...category, selected: true, items: category.items.concat(resData)}) : category)
-            : prevGroceryData.concat({...resData, selected: true})
-    }
-    else {
-        newData = 
+    switch(mode) {
+        case 'delete':
+            newData = prevGroceryData.reduce((accVal, currVal) => {
+                if (currVal.id != resData.id) {
+                    return [...accVal,
+                        {
+                            ...currVal,
+                            items: currVal.items.reduce((a, c) => {
+                                return c.id != resData.id ? a.concat(c) : a
+                            }, [])
+                        }
+                    ]
+                } else {
+                    return accVal
+                }
+            }, [])
+            break
+
+        case 'add':
+            newData = 
+                resData.parent_category_id
+                ? prevGroceryData.map(category => 
+                    category.id === resData.parent_category_id ? ({...category, selected: true, items: category.items.concat(resData)}) : category)
+                : prevGroceryData.map(category => 
+                    category.selected ? {...category, selected: false} : category).concat({...resData, selected: true})
+            break
+
+        case 'edit':
+            newData = 
             resData.parent_category_id
                 ? prevGroceryData.map(category =>
                     category.id === resData.parent_category_id
@@ -95,10 +91,9 @@ export function setGroceryDataInState(prevGroceryData, resData, mode) {
                         : category
                 )
                 : prevGroceryData.map(category => category.id === resData.id ? {...resData, selected: true} : category)
+            break
     }
-
-    const returnData = orderGroceryData(newData)
-    return returnData
+    return orderGroceryData(newData)
 }
 
 export function setUserEventInState(mode, target, id, groceryData) {
